@@ -1,0 +1,88 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Products {
+  id      Int     @id 
+  user    Users   @relation(fields: [usersId], references: [id])
+  posts   Posts[]
+  usersId Int
+}
+
+model Services {
+  id      Int     @id 
+  user    Users   @relation(fields: [usersId], references: [id])
+  posts   Posts[]
+  usersId Int
+}
+
+model Users {
+  id               Int           @id
+  posts            Posts[]
+  communities      Communities[]
+  sentMessages     Messages[]    @relation("SentMessages")
+  receivedMessages Messages[]    @relation("ReceivedMessages")
+  moderator        Moderators[]
+  Products         Products[]
+  Services         Services[]
+}
+
+model Posts {
+  id            Int          @id @default(autoincrement())
+  title         String
+  description   String
+  image         String?
+  creator       Users        @relation(fields: [userId], references: [id])
+  userId        Int
+  product       Products?    @relation(fields: [productsId], references: [id])
+  productsId    Int?
+  service       Services?    @relation(fields: [servicesId], references: [id])
+  servicesId    Int?
+  updatedAt     DateTime?
+  createdAt     DateTime     @default(now())
+  deletedAt     DateTime?
+  active        Boolean      @default(true)
+  community     Communities? @relation(fields: [communitiesId], references: [id])
+  communitiesId Int
+}
+
+model Communities {
+  id          Int          @id @default(autoincrement())
+  name        String
+  description String?
+  users       Users[]
+  moderators  Moderators[]
+  posts       Posts[]
+  messages    Messages[]
+  code        String
+  createdAt   DateTime     @default(now())
+  deletedAt   DateTime?
+}
+
+model Messages {
+  id            Int          @id @default(autoincrement())
+  fromUser      Users        @relation(fields: [fromUserId], references: [id], name: "SentMessages")
+  toUser        Users        @relation(fields: [toUserId], references: [id], name: "ReceivedMessages")
+  contents      String
+  timeSent      DateTime
+  community     Communities? @relation(fields: [communitiesId], references: [id])
+  communitiesId Int?
+  fromUserId    Int
+  toUserId      Int
+}
+
+model Moderators {
+  id            Int         @id @default(autoincrement())
+  users         Users       @relation(fields: [usersId], references: [id])
+  communities   Communities @relation(fields: [communitiesId], references: [id])
+  usersId       Int
+  communitiesId Int
+}

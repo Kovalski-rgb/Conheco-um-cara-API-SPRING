@@ -1,0 +1,139 @@
+tags:
+  - name: Product
+    description: Product CRUD routes
+  - name: Service
+    description: Service CRUD routes
+
+components:
+  schemas:
+
+    Id:
+      type: integer
+      format: int32
+      minimum: 1
+      example: 150  
+
+    product:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 3
+          maxLength: 30
+          example: "The Example Community"
+        description:
+          type: string
+          maxLength: 400
+          example: "(Optional) This community will serve as an example!"
+        price:          
+          type: number
+          format: float
+          minimum: 1
+          example: 10.50 
+        productTypeId:
+          type: integer
+          format: int32
+          minimum: 1
+          example: 1  
+      required: 
+        - name
+        - price
+        - productTypeId
+
+    productData:
+      type: object
+      properties:
+        id:
+          type: integer 
+          format: int32
+          minimum: 1
+          example: 1      
+        name:
+          type: string
+          minLength: 3
+          maxLength: 30
+          example: "The Example Community"
+        description:
+          type: string
+          maxLength: 400
+          example: "(Optional) This community will serve as an example!"
+        price:          
+          type: number
+          format: float
+          minimum: 1
+          example: 10.50 
+        productTypeId:
+          type: integer
+          format: int32
+          minimum: 1
+          example: 1  
+
+    service:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 3
+          maxLength: 30
+          example: "The Example Community"
+        description:
+          type: string
+          maxLength: 400
+          example: "(Optional) This community will serve as an example!"
+        price:          
+          type: number
+          format: float
+          minimum: 1
+          example: 10.50 
+        serviceTypeId:
+          type: integer
+          format: int32
+          minimum: 1
+          example: 1  
+      required: 
+        - name
+        - price
+        - serviceTypeId
+
+    serviceData:
+      type: object
+      properties:
+        id:
+          type: integer 
+          format: int32
+          minimum: 1
+          example: 1      
+        name:
+          type: string
+          minLength: 3
+          maxLength: 30
+          example: "The Example Community"
+        description:
+          type: string
+          maxLength: 400
+          example: "(Optional) This community will serve as an example!"
+        price:          
+          type: number
+          format: float
+          minimum: 1
+          example: 10.50 
+        serviceTypeId:
+          type: integer
+          format: int32
+          minimum: 1
+          example: 1  
+
+  parameters:
+    Id:
+      in: path
+      name: id
+      description: Unique id
+      required: true
+      schema:
+        $ref: '#/components/schemas/Id'
+
+  securitySchemes:
+    JWT:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

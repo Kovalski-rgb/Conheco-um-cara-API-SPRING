@@ -1,0 +1,79 @@
+tags:
+  - name: Community
+    description: Community CRUD routes
+  - name: Users
+    description: Community users routes
+  - name: Testing
+    description: Temporary testing routes
+
+components:
+  schemas:
+
+    Id:
+      type: integer
+      format: int32
+      minimum: 1
+      example: 150
+
+    testSchema:
+      type: object
+      properties:
+        name:
+          type: string
+        test:
+          type: string
+
+    community:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 3
+          maxLength: 30
+          example: "The Example Community"
+        description:
+          type: string
+          maxLength: 400
+          example: "(Optional) This community will serve as an example!"
+      required: 
+        - name
+    
+    communityName:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 3
+          maxLength: 30
+          example: "The Example Community"
+
+    communityParams:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 3
+          maxLength: 30
+          example: "The Example Community"
+        code:
+          type: string
+          minLength: 6
+          maxLength: 6
+          example: "a1b2c3"
+
+
+  
+  parameters:
+    Id:
+      in: path
+      name: id
+      description: Unique id
+      required: true
+      schema:
+        $ref: '#/components/schemas/Id'
+
+  securitySchemes:
+    JWT:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
