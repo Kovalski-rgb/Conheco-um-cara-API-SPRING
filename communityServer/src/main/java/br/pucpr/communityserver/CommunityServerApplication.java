@@ -1,13 +1,13 @@
-package br.pucpr.musicserver;
+package br.pucpr.communityserver;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class MusicserverApplication {
+public class CommunityServerApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(MusicserverApplication.class, args);
+		SpringApplication.run(CommunityServerApplication.class, args);
 	}
 
 }

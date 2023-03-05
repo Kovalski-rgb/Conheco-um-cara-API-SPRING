@@ -1,4 +1,4 @@
-package br.pucpr.musicserver;
+package br.pucpr.communityserver;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

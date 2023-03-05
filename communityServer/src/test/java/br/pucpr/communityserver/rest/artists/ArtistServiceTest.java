@@ -1,4 +1,4 @@
-package br.pucpr.musicserver.rest.artists;
+package br.pucpr.communityserver.rest.artists;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -12,7 +12,7 @@ import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import br.pucpr.musicserver.lib.exception.BadRequestException;
+import br.pucpr.communityserver.lib.exception.BadRequestException;
 
 public class ArtistServiceTest {
 

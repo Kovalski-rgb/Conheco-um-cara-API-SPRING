@@ -1,4 +1,4 @@
-package br.pucpr.musicserver.rest.users.requests;
+package br.pucpr.communityserver.rest.users.requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

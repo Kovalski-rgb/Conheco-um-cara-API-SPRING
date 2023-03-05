@@ -1,8 +1,8 @@
-package br.pucpr.musicserver.rest.users;
+package br.pucpr.communityserver.rest.users;
 
-import br.pucpr.musicserver.lib.security.JWT;
-import br.pucpr.musicserver.rest.users.requests.LoginRequest;
-import br.pucpr.musicserver.rest.users.resonses.UserLoginResponse;
+import br.pucpr.communityserver.lib.security.JWT;
+import br.pucpr.communityserver.rest.users.requests.LoginRequest;
+import br.pucpr.communityserver.rest.users.resonses.UserLoginResponse;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;

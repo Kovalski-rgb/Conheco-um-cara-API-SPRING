@@ -1,4 +1,4 @@
-package br.pucpr.musicserver.rest.users.resonses;
+package br.pucpr.communityserver.rest.users.resonses;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;

@@ -1,4 +1,4 @@
-package br.pucpr.musicserver.rest.users.requests;
+package br.pucpr.communityserver.rest.users.requests;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
