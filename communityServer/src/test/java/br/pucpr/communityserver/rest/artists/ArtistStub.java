@@ -1,4 +1,4 @@
-package br.pucpr.musicserver.rest.artists;
+package br.pucpr.communityserver.rest.artists;
 
 import java.util.Random;
 import java.util.Set;

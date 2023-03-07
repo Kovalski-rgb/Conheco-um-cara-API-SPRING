@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>br.pucpr</groupId>
-	<artifactId>musicserver</artifactId>
+	<artifactId>communityserver</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>musicserver</name>
+	<name>communityserver</name>
 	<description>Music Server</description>
 	<properties>
 		<java.version>17</java.version>
