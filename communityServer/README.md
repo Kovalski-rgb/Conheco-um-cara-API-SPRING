@@ -1,4 +1,4 @@
-# Bradesco-MusicServer-Spring
+# Bradesco-CommunityServer-Spring
 
 GRUPO:
  - André Luiz Kovalski

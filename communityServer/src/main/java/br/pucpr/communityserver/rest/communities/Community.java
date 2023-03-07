@@ -1,21 +1,33 @@
 package br.pucpr.communityserver.rest.communities;
 
-import br.pucpr.communityserver.rest.moderators.Moderator;
-import br.pucpr.communityserver.rest.posts.Post;
+import br.pucpr.communityserver.rest.communities.requests.CommunityRequest;
+import br.pucpr.communityserver.rest.communities.requests.CommunityJoinRequest;
 import br.pucpr.communityserver.rest.users.User;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
-@Data
+@Data @Entity
 @AllArgsConstructor
 @NoArgsConstructor
+
+@NamedQuery(
+        name="Community.getCommunitiesByCodeAndName",
+        query = "SELECT c FROM Community c " +
+                "WHERE c.code = :code " +
+                "and c.name = :name"
+)
+@NamedQuery(
+        name="Community.getCommunitiesByCode",
+        query = "SELECT code FROM Community c " +
+                "WHERE code = :code"
+)
+
 public class Community {
 
     @Id
@@ -27,14 +39,17 @@ public class Community {
 
     private String description;
 
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 
+    @ManyToMany(mappedBy = "communities")
     private Set<User> users;
-
-    private Set<Moderator> moderators;
-
-    private Set<Post> posts;
 
     @NotEmpty
     private String code;
+
+    public Community(CommunityRequest request) {
+        this.name = request.getName();
+        this.description = request.getDescription();
+    }
+
 }
