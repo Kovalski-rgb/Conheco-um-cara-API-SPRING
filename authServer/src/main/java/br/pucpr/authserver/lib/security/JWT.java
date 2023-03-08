@@ -2,7 +2,7 @@ package br.pucpr.authserver.lib.security;
 
 import br.pucpr.authserver.rest.users.User;
 import br.pucpr.authserver.rest.users.responses.RoleResponse;
-import br.pucpr.authserver.rest.users.responses.UserCreateResponse;
+import br.pucpr.authserver.rest.users.responses.UserLoginDTO;
 import br.pucpr.authserver.rest.users.responses.UserLoginResponse;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.jackson.io.JacksonDeserializer;
@@ -57,7 +57,7 @@ public class JWT {
         return Date.from(date.atStartOfDay(ZoneOffset.UTC).toInstant());
     }
 
-    public String createtoken(User user){
+    public String createToken(UserLoginDTO user){
         final var now = LocalDate.now();
         return Jwts.builder()
                 .signWith(Keys.hmacShaKeyFor(settings.getSecret().getBytes()))
@@ -65,10 +65,8 @@ public class JWT {
                 .setIssuedAt(toDate(now))
                 .setExpiration(toDate(now.plusDays(2)))
                 .setIssuer(settings.getIssuer())
-                .setSubject(settings.getTestUser().getId().toString())
-                // TODO add claims (learn how to map a user with real data on token)
-//                .addClaims(Map.of("user", user))
-                .addClaims(Map.of("user", settings.getTestUser()))
+                .setSubject(user.getId().toString())
+                .addClaims(Map.of("user", user))
                 .compact();
     }
 
@@ -110,9 +108,10 @@ public class JWT {
                 testUser.getId(),
                 "Test_User",
                 "Test_User",
-                testUser.getRoles().stream()
-                        .map(RoleResponse::new)
-                        .collect(Collectors.toSet())
+                testUser.getRoles()
+//                        .stream()
+//                        .map(RoleResponse::new)
+//                        .collect(Collectors.toSet())
         );
     }
 

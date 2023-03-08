@@ -16,18 +16,13 @@ public class UserLoginResponse {
     private Long id;
     private String email;
     private String name;
-    private Set<RoleResponse> roles;
+    private Set<String> roles;
 
     public UserLoginResponse(String token, User user) {
         this.token = token;
         this.id = user.getId();
         this.email = user.getEmail();
         this.name = user.getName();
-        Set<String> roles = user.getRoles();
-        Set<RoleResponse> roleSet = new HashSet<>();
-        for(String role : roles){
-            roleSet.add(new RoleResponse((role)));
-        }
-        this.roles = roleSet;
+        this.roles = user.getRoles();
     }
 }
