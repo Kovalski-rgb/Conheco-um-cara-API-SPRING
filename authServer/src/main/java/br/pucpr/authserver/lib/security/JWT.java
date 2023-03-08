@@ -2,6 +2,7 @@ package br.pucpr.authserver.lib.security;
 
 import br.pucpr.authserver.rest.users.User;
 import br.pucpr.authserver.rest.users.responses.RoleResponse;
+import br.pucpr.authserver.rest.users.responses.UserCreateResponse;
 import br.pucpr.authserver.rest.users.responses.UserLoginResponse;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.jackson.io.JacksonDeserializer;
@@ -65,7 +66,9 @@ public class JWT {
                 .setExpiration(toDate(now.plusDays(2)))
                 .setIssuer(settings.getIssuer())
                 .setSubject(settings.getTestUser().getId().toString())
-                .addClaims(Map.of("user", user))
+                // TODO add claims (learn how to map a user with real data on token)
+//                .addClaims(Map.of("user", user))
+                .addClaims(Map.of("user", settings.getTestUser()))
                 .compact();
     }
 

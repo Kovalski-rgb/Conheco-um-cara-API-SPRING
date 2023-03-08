@@ -15,7 +15,6 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 
-//TODO fix named query
 @NamedQuery(
         name="User.getUserByEmailPassword",
         query = "SELECT u FROM User u " +

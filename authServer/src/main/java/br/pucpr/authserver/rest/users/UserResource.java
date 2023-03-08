@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/users")
 public class UserResource {
@@ -48,6 +50,13 @@ public class UserResource {
             @Valid @RequestBody CreateUserRequest credentials
     ){
         var user = service.createUser(credentials);
+//        var result = Map.of("user", user);
+//
+//        for(Map.Entry<String, UserCreateResponse> entry : result.entrySet()){
+//            System.out.println("key " + entry.getKey());
+//            System.out.println("value " + entry.getValue());
+//        }
+
         return user == null ?
                 ResponseEntity.status(HttpStatus.UNAUTHORIZED).build() :
                 ResponseEntity.ok(user);

@@ -23,4 +23,13 @@ public class UserCreateResponse {
         this.email = user.getEmail();
         this.telephone = user.getTelephone();
     }
+
+    @Override
+    public String toString() {
+        return "UserCreateResponse{" +
+                "name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", telephone='" + telephone + '\'' +
+                '}';
+    }
 }
