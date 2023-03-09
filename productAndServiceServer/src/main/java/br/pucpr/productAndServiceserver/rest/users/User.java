@@ -1,5 +1,6 @@
 package br.pucpr.productAndServiceserver.rest.users;
 
+import br.pucpr.productAndServiceserver.rest.products.Product;
 import br.pucpr.productAndServiceserver.rest.users.requests.UserTokenDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -17,23 +18,20 @@ public class User {
     private Long id;
 
 //    TODO change to products and services
-//    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-//    @JoinTable(
-//            name = "usersCommunities",
-//            joinColumns = @JoinColumn(name="user_id", referencedColumnName = "id"),
-//            inverseJoinColumns = @JoinColumn(name = "community_id", referencedColumnName = "id")
-//    )
-//    private Set<Community> communities;
+    @OneToMany(mappedBy = "owner", cascade = { CascadeType.PERSIST })
+    private Set<Product> products;
 
     public User(UserTokenDTO userTokenDTO) {
         this.id = userTokenDTO.getId();
     }
 
+    public User fromUserTokenDTO(UserTokenDTO tokenDTO){
+        this.id = tokenDTO.getId();
+        return this;
+    }
+
     @Override
     public String toString() {
-        return "User{" +
-                "id=" + id +
-//                ", communities=" + communities +
-                '}';
+        return "User{id=" + id + '}';
     }
 }

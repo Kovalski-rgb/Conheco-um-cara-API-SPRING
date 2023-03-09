@@ -20,7 +20,7 @@ import org.springframework.web.filter.CorsFilter;
 import br.pucpr.productAndServiceserver.lib.security.JwtTokenFilter;
 
 @SecurityScheme(
-        name="ProductAndServiceServer",
+        name="JWT-token",
         type= SecuritySchemeType.HTTP,
         bearerFormat = "JWT",
         scheme = "bearer"
