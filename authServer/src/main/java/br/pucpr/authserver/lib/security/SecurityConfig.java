@@ -52,11 +52,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(requests->
                     requests
                             .requestMatchers(HttpMethod.GET).permitAll()
-                            .requestMatchers(HttpMethod.POST/*, "/users/test", "/users/login"*/).permitAll()
+                            .requestMatchers(HttpMethod.POST /*", /users/testUser", "/users/login"*/).permitAll()
                             .requestMatchers(HttpMethod.PUT).permitAll()
                             .requestMatchers(HttpMethod.DELETE).permitAll()
                             .anyRequest().authenticated()
-                ).addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
+                )
+                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 

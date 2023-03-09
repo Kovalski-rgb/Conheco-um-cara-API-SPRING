@@ -5,6 +5,7 @@ import br.pucpr.authserver.lib.exception.NotFoundException;
 import br.pucpr.authserver.lib.security.JWT;
 import br.pucpr.authserver.rest.users.requests.CreateUserRequest;
 import br.pucpr.authserver.rest.users.requests.LoginRequest;
+import br.pucpr.authserver.rest.users.requests.UpdateUserRequest;
 import br.pucpr.authserver.rest.users.responses.UserCreateResponse;
 import br.pucpr.authserver.rest.users.responses.UserGetResponse;
 import br.pucpr.authserver.rest.users.responses.UserLoginDTO;
@@ -71,4 +72,11 @@ public class UserService {
         return users.stream().map(u -> new UserGetResponse(u)).toList();
     }
 
+
+    public UserGetResponse updateUser(Long id, UpdateUserRequest updateRequest) {
+        if(!repository.existsById(id)) throw new NotFoundException("User not found");
+        var user = repository.findById(id).get();
+        user.setUpdatedData(updateRequest);
+        return new UserGetResponse(repository.save(user));
+    }
 }

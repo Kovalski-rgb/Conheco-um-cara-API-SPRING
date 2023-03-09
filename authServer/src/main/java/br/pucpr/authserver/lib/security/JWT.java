@@ -53,6 +53,18 @@ public class JWT {
         return UsernamePasswordAuthenticationToken.authenticated(user, user.getId(), authorities);
     }
 
+    public User decode(String token){
+        token = token.replace(prefix, "").trim();
+        final var claims = Jwts.parserBuilder()
+                .setSigningKey(settings.getSecret().getBytes())
+                .deserializeJsonWith(new JacksonDeserializer<>(Map.of("user", User.class)))
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        return claims.get("user", User.class);
+    }
+
     public static Date toDate(LocalDate date){
         return Date.from(date.atStartOfDay(ZoneOffset.UTC).toInstant());
     }
@@ -67,22 +79,6 @@ public class JWT {
                 .setIssuer(settings.getIssuer())
                 .setSubject(user.getId().toString())
                 .addClaims(Map.of("user", user))
-                .compact();
-    }
-
-    public String createTestUserToken(String token){
-        if(!settings.isTestUserAllowed()) return null;
-        if(!Objects.equals(token, settings.getToken())) return null;
-
-        final var now = LocalDate.now();
-        return Jwts.builder()
-                .signWith(Keys.hmacShaKeyFor(settings.getSecret().getBytes()))
-                .serializeToJsonWith(new JacksonSerializer<>())
-                .setIssuedAt(toDate(now))
-                .setExpiration(toDate(now.plusDays(2)))
-                .setIssuer(settings.getIssuer())
-                .setSubject(settings.getTestUser().getId().toString())
-                .addClaims(Map.of("user", settings.getTestUser()))
                 .compact();
     }
 

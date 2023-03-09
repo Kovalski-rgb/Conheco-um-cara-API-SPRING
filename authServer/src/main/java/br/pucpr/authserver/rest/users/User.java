@@ -1,9 +1,9 @@
 package br.pucpr.authserver.rest.users;
 
 import br.pucpr.authserver.rest.users.requests.CreateUserRequest;
+import br.pucpr.authserver.rest.users.requests.UpdateUserRequest;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -51,6 +51,25 @@ public class User {
         this.password = new BCryptPasswordEncoder().encode(request.getPassword());
         this.email = request.getEmail();
         this.telephone = request.getTelephone();
+    }
+
+    public void setUpdatedData(UpdateUserRequest newUser){
+        if(newUser.getName() != null && !newUser.getName().isEmpty()) this.setName(newUser.getName());
+        if(newUser.getEmail() != null && !newUser.getEmail().isEmpty()) this.setEmail(newUser.getEmail());
+        if(newUser.getTelephone() != null && !newUser.getTelephone().isEmpty()) this.setTelephone(newUser.getTelephone());
+        if(newUser.getPassword() != null && !newUser.getPassword().isEmpty()) this.setPassword(new BCryptPasswordEncoder().encode(newUser.getPassword()));
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", telephone='" + telephone + '\'' +
+                ", roles=" + roles +
+                '}';
     }
 
 }
