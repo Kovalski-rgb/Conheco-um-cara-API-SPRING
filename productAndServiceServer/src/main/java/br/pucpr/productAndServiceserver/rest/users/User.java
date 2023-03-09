@@ -3,6 +3,7 @@ package br.pucpr.productAndServiceserver.rest.users;
 import br.pucpr.productAndServiceserver.rest.products.Product;
 import br.pucpr.productAndServiceserver.rest.services.Service;
 import br.pucpr.productAndServiceserver.rest.users.requests.UserTokenDTO;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,9 +19,11 @@ public class User {
     @Id
     private Long id;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @OneToMany(mappedBy = "owner", cascade = { CascadeType.PERSIST })
     private Set<Service> services;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @OneToMany(mappedBy = "owner", cascade = { CascadeType.PERSIST })
     private Set<Product> products;
 
