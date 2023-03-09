@@ -1,16 +1,13 @@
 package br.pucpr.productAndServiceserver.rest.products;
 
-import br.pucpr.productAndServiceserver.rest.products.request.ProductRegisterRequest;
-import br.pucpr.productAndServiceserver.rest.products.request.ProductUpdateRequest;
+import br.pucpr.productAndServiceserver.rest.products.request.ProductRequest;
 import br.pucpr.productAndServiceserver.rest.users.User;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -51,7 +48,7 @@ public class Product {
 
     private LocalDateTime createdAt;
 
-    public Product fromRequest(ProductRegisterRequest request){
+    public Product fromRequest(ProductRequest request){
         this.name = request.getName();
         this.description = request.getDescription();
         this.productType = request.getProductType();
@@ -59,7 +56,7 @@ public class Product {
         return this;
     }
 
-    public void update(ProductUpdateRequest product){
+    public void update(ProductRequest product){
         if(product.getName() != null && !product.getName().isEmpty()) this.name = product.getName();
         if(product.getDescription() != null) this.description = product.getDescription();
         if(product.getPrice() != null  && !product.getPrice().isNaN())this.price = product.getPrice();

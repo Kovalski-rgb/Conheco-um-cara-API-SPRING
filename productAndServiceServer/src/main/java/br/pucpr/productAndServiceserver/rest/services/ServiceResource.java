@@ -1,9 +1,8 @@
 package br.pucpr.productAndServiceserver.rest.services;
 
 import br.pucpr.productAndServiceserver.lib.security.JWT;
-import br.pucpr.productAndServiceserver.rest.products.request.ProductUpdateRequest;
-import br.pucpr.productAndServiceserver.rest.services.request.ProductRegisterRequest;
-import br.pucpr.productAndServiceserver.rest.services.response.ProductResponse;
+import br.pucpr.productAndServiceserver.rest.services.request.ServiceRequest;
+import br.pucpr.productAndServiceserver.rest.services.response.ServiceResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,13 +15,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/product")
-public class ProductResource {
+@RequestMapping("/service")
+public class ServiceResource {
 
     private JWT jwt;
-    private ProductService service;
+    private ServiceService service;
 
-    public ProductResource(JWT jwt, ProductService service) {
+    public ServiceResource(JWT jwt, ServiceService service) {
         this.jwt = jwt;
         this.service = service;
     }
@@ -31,12 +30,12 @@ public class ProductResource {
     @Transactional
     @SecurityRequirement(name="JWT-token")
     @RolesAllowed("USER")
-    public ResponseEntity<Product> register(
+    public ResponseEntity<Service> register(
             HttpServletRequest headers,
-            @RequestBody @Valid ProductRegisterRequest product
+            @RequestBody @Valid ServiceRequest service
     ){
         var userDTO = jwt.decode(headers.getHeader("Authorization"));
-        var response = service.register(userDTO, product);
+        var response = this.service.register(userDTO, service);
         return response==null ? ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build() :
                 ResponseEntity.ok(response);
     }
@@ -45,7 +44,7 @@ public class ProductResource {
     @Transactional
     @SecurityRequirement(name="JWT-token")
     @RolesAllowed("USER")
-    public List<ProductResponse> register(
+    public List<ServiceResponse> register(
             HttpServletRequest headers
     ){
         var userDTO = jwt.decode(headers.getHeader("Authorization"));
@@ -56,13 +55,13 @@ public class ProductResource {
     @Transactional
     @SecurityRequirement(name="JWT-token")
     @RolesAllowed("USER")
-    public ResponseEntity<ProductResponse> update(
+    public ResponseEntity<ServiceResponse> update(
             HttpServletRequest headers,
             @Valid @RequestParam Long id,
-            @Valid @RequestBody ProductUpdateRequest request
+            @Valid @RequestBody ServiceRequest request
     ){
         var userDTO = jwt.decode(headers.getHeader("Authorization"));
-        var result = service.updateProduct(userDTO.getId(), id, request);
+        var result = service.updateService(userDTO.getId(), id, request);
         return result == null ? ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build() :
                 ResponseEntity.ok(result);
     }
@@ -76,8 +75,7 @@ public class ProductResource {
             @Valid @RequestParam Long id
     ){
         var userDTO = jwt.decode(headers.getHeader("Authorization"));
-        service.deleteProduct(userDTO.getId(), id);
+        service.deleteService(userDTO.getId(), id);
     }
-    //TODO delete by id (only from user)
 
 }

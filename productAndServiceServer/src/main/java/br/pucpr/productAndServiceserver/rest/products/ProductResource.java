@@ -1,16 +1,13 @@
 package br.pucpr.productAndServiceserver.rest.products;
 
 import br.pucpr.productAndServiceserver.lib.security.JWT;
-import br.pucpr.productAndServiceserver.rest.products.request.ProductRegisterRequest;
-import br.pucpr.productAndServiceserver.rest.products.request.ProductUpdateRequest;
+import br.pucpr.productAndServiceserver.rest.products.request.ProductRequest;
 import br.pucpr.productAndServiceserver.rest.products.response.ProductResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +32,7 @@ public class ProductResource {
     @RolesAllowed("USER")
     public ResponseEntity<Product> register(
             HttpServletRequest headers,
-            @RequestBody @Valid ProductRegisterRequest product
+            @RequestBody @Valid ProductRequest product
     ){
         var userDTO = jwt.decode(headers.getHeader("Authorization"));
         var response = service.register(userDTO, product);
@@ -61,7 +58,7 @@ public class ProductResource {
     public ResponseEntity<ProductResponse> update(
             HttpServletRequest headers,
             @Valid @RequestParam Long id,
-            @Valid @RequestBody ProductUpdateRequest request
+            @Valid @RequestBody ProductRequest request
     ){
         var userDTO = jwt.decode(headers.getHeader("Authorization"));
         var result = service.updateProduct(userDTO.getId(), id, request);
@@ -80,6 +77,5 @@ public class ProductResource {
         var userDTO = jwt.decode(headers.getHeader("Authorization"));
         service.deleteProduct(userDTO.getId(), id);
     }
-    //TODO delete by id (only from user)
 
 }

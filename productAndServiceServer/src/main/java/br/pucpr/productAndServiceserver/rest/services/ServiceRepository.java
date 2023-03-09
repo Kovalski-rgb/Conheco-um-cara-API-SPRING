@@ -6,9 +6,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ProductRepository extends JpaRepository<Product, Long> {
+public interface ServiceRepository extends JpaRepository<Service, Long> {
 
-    public List<Product> getProductsByOwnerId(Long ownerId);
+    public List<Service> getServicesByOwnerId(Long ownerId);
 
 
 }

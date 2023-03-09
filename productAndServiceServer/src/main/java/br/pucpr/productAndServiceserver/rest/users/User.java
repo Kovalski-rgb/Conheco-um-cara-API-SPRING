@@ -1,6 +1,7 @@
 package br.pucpr.productAndServiceserver.rest.users;
 
 import br.pucpr.productAndServiceserver.rest.products.Product;
+import br.pucpr.productAndServiceserver.rest.services.Service;
 import br.pucpr.productAndServiceserver.rest.users.requests.UserTokenDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -17,7 +18,9 @@ public class User {
     @Id
     private Long id;
 
-//    TODO change to products and services
+    @OneToMany(mappedBy = "owner", cascade = { CascadeType.PERSIST })
+    private Set<Service> services;
+
     @OneToMany(mappedBy = "owner", cascade = { CascadeType.PERSIST })
     private Set<Product> products;
 
