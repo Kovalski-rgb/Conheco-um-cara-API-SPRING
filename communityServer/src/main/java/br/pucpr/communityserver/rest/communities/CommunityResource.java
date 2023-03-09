@@ -1,8 +1,13 @@
 package br.pucpr.communityserver.rest.communities;
 
+import br.pucpr.communityserver.lib.security.JWT;
 import br.pucpr.communityserver.rest.communities.requests.CommunityJoinRequest;
 import br.pucpr.communityserver.rest.communities.requests.CommunityRequest;
 import br.pucpr.communityserver.rest.communities.responses.CommunityResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
+import jakarta.annotation.security.RolesAllowed;
+import jakarta.persistence.Transient;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
@@ -19,12 +24,14 @@ import java.util.List;
 public class CommunityResource {
 
     private CommunityService service;
+    private JWT jwt;
 
-    public CommunityResource(CommunityService communityService) {
-        this.service = communityService;
+    public CommunityResource(CommunityService service, JWT jwt) {
+        this.service = service;
+        this.jwt = jwt;
     }
 
-    @PostMapping
+    @PostMapping("/create")
     @Transactional
     public ResponseEntity<CommunityResponse> createCommunity(
         @Valid @RequestBody CommunityRequest request
@@ -38,13 +45,14 @@ public class CommunityResource {
 
     @PostMapping("/join")
     @Transactional
-    public ResponseEntity<CommunityResponse> joinCommunity(
-            // TODO find a way to get the user ID from the auth token
-            ServletRequest headers,
+    @SecurityRequirement(name = "JWT-token")
+    @RolesAllowed({"USER"})
+    public void joinCommunity(
+            HttpServletRequest headers,
             @Valid @RequestBody CommunityJoinRequest request
     ){
-        System.out.println(headers == null? "it is null" : ((HttpServletRequest) headers).getAuthType());
-        return null;
+        String token = headers.getHeader("Authorization");
+        service.joinCommunity(jwt.decode(token), request);
     }
 
     @GetMapping
@@ -70,6 +78,29 @@ public class CommunityResource {
             @RequestParam Long id
     ){
         service.deleteCommunity(id);
+    }
+
+    @PostMapping("/leave")
+    @Transactional
+    @SecurityRequirement(name = "JWT-token")
+    @RolesAllowed({"USER"})
+    public void leaveCommunity(
+            HttpServletRequest headers,
+            @RequestParam Long communityId
+    ){
+        String token = headers.getHeader("Authorization");
+        service.leaveCommunity(jwt.decode(token), communityId);
+    }
+
+    @GetMapping("/me")
+    @Transactional
+    @SecurityRequirement(name = "JWT-token")
+    @RolesAllowed({"USER"})
+    public List<CommunityResponse> listCommunities(
+            HttpServletRequest headers
+    ){
+        String token = headers.getHeader("Authorization");
+        return service.listAllCommunitiesFromUser(jwt.decode(token).getId());
     }
 
 }

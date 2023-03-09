@@ -1,6 +1,7 @@
 package br.pucpr.communityserver.rest.users;
 
 import br.pucpr.communityserver.rest.communities.Community;
+import br.pucpr.communityserver.rest.users.requests.UserTokenDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -15,15 +16,9 @@ import java.util.Set;
 public class User {
 
     @Id
-    @GeneratedValue
     private Long id;
 
-    private Set<String> roles;
-
-
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @ManyToMany
-    @Column(name="userCommunities")
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(
             name = "usersCommunities",
             joinColumns = @JoinColumn(name="user_id", referencedColumnName = "id"),
@@ -31,4 +26,15 @@ public class User {
     )
     private Set<Community> communities;
 
+    public User(UserTokenDTO userTokenDTO) {
+        this.id = userTokenDTO.getId();
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", communities=" + communities +
+                '}';
+    }
 }

@@ -19,12 +19,16 @@ public class CommunityResponse {
     private String description;
 
     @NotEmpty
+    private String code;
+
+    @NotEmpty
     private LocalDateTime createdAt;
 
     public CommunityResponse(Community community){
         this.id = community.getId();
         this.name = community.getName();
         this.description = community.getDescription();
+        this.code = community.getCode();
         this.createdAt = community.getCreatedAt();
     }
 

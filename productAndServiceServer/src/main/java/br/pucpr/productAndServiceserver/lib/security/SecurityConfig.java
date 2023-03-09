@@ -1,4 +1,4 @@
-package br.pucpr.communityserver.lib.security;
+package br.pucpr.productAndServiceserver.lib.security;
 
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
@@ -17,8 +17,10 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import br.pucpr.productAndServiceserver.lib.security.JwtTokenFilter;
+
 @SecurityScheme(
-        name="JWT-token",
+        name="ProductAndServiceServer",
         type= SecuritySchemeType.HTTP,
         bearerFormat = "JWT",
         scheme = "bearer"
@@ -50,11 +52,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(requests->
                     requests
                             .requestMatchers(HttpMethod.GET).permitAll()
-                            .requestMatchers(HttpMethod.POST/*, "/users/test", "/users/login"*/).permitAll()
+                            .requestMatchers(HttpMethod.POST /*", /users/testUser", "/users/login"*/).permitAll()
                             .requestMatchers(HttpMethod.PUT).permitAll()
                             .requestMatchers(HttpMethod.DELETE).permitAll()
                             .anyRequest().authenticated()
-                ).addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
+                )
+                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 

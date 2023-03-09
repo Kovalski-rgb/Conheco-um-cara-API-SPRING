@@ -1,9 +1,6 @@
-package br.pucpr.communityserver.lib.security;
+package br.pucpr.productAndServiceserver.lib.security;
 
-import br.pucpr.communityserver.rest.users.User;
-import br.pucpr.communityserver.rest.users.requests.UserTokenDTO;
-import br.pucpr.communityserver.rest.users.responses.RoleResponse;
-import br.pucpr.communityserver.rest.users.responses.UserLoginResponse;
+import br.pucpr.productAndServiceserver.rest.users.requests.UserTokenDTO;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.jackson.io.JacksonDeserializer;
 import io.jsonwebtoken.jackson.io.JacksonSerializer;
@@ -20,7 +17,6 @@ import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Component
 public class JWT {

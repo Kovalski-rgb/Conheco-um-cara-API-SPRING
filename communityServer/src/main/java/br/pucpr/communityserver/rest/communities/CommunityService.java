@@ -1,8 +1,13 @@
 package br.pucpr.communityserver.rest.communities;
 
+import br.pucpr.communityserver.lib.exception.ForbiddenException;
 import br.pucpr.communityserver.lib.exception.NotFoundException;
+import br.pucpr.communityserver.rest.communities.requests.CommunityJoinRequest;
 import br.pucpr.communityserver.rest.communities.requests.CommunityRequest;
 import br.pucpr.communityserver.rest.communities.responses.CommunityResponse;
+import br.pucpr.communityserver.rest.users.User;
+import br.pucpr.communityserver.rest.users.UserRepository;
+import br.pucpr.communityserver.rest.users.requests.UserTokenDTO;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -15,9 +20,11 @@ public class CommunityService {
 
     private final int CODE_LENGTH = 8;
     private CommunityRepository repository;
+    private UserRepository userRepository;
 
-    public CommunityService(CommunityRepository communityRepository) {
-        this.repository = communityRepository;
+    public CommunityService(CommunityRepository repository, UserRepository userRepository) {
+        this.repository = repository;
+        this.userRepository = userRepository;
     }
 
     public CommunityResponse saveCommunity(CommunityRequest communityRequest){
@@ -43,6 +50,11 @@ public class CommunityService {
         return response;
     }
 
+    public List<CommunityResponse> listAllCommunitiesFromUser(Long userId){
+        var communities = repository.getAllCommunitiesByUserId(userId);
+        return communities.stream().map(c->new CommunityResponse(c)).toList();
+    }
+
     public CommunityResponse editCommunity(Long targetCommunityId, CommunityRequest request){
         if(!repository.existsById(targetCommunityId)) { throw new NotFoundException("Target community not found"); };
 
@@ -60,7 +72,28 @@ public class CommunityService {
         repository.deleteById(communityId);
     }
 
-//    public
+    public void joinCommunity(UserTokenDTO tokenDTO, CommunityJoinRequest request){
+        var name = request.getName();
+        var code = request.getCode();
+        var community = repository.getCommunitiesByCodeAndName(name, code);
+        if(community == null) throw new NotFoundException("Incorrect community or code");
+
+        var user = new User(tokenDTO);
+        if(!userRepository.existsById(user.getId())) userRepository.save(user);
+        if(repository.getUserInCommunityById(community.getId(), user.getId()) != null) throw new ForbiddenException("User is already inside this community");
+
+        community.getUsers().add(user);
+        repository.save(community);
+    }
+
+    public void leaveCommunity(UserTokenDTO tokenDTO, Long communityId) {
+        if(!repository.existsById(communityId)) throw new NotFoundException("Community not found");
+        if(repository.getUserInCommunityById(communityId, tokenDTO.getId()) == null) throw new NotFoundException("User not found inside community");
+
+        var user = new User(tokenDTO);
+        repository.removeUserFromCommunity(communityId, user.getId());
+    }
+
 
     private String generateCode(int size){
         String baseChars = "abcefghijklmnopqrstuvwxzy0123456789";

@@ -18,14 +18,40 @@ import java.util.Set;
 
 @NamedQuery(
         name="Community.getCommunitiesByCodeAndName",
-        query = "SELECT c FROM Community c " +
-                "WHERE c.code = :code " +
-                "and c.name = :name"
+        query = "SELECT c FROM Community c" +
+                " WHERE c.code = :code" +
+                " AND c.name = :name"
 )
 @NamedQuery(
         name="Community.getCommunitiesByCode",
-        query = "SELECT code FROM Community c " +
-                "WHERE code = :code"
+        query = "SELECT code FROM Community c" +
+                " WHERE code = :code"
+)
+@NamedQuery(
+        name = "Community.getUserInCommunityById",
+        query = "SELECT users FROM Community c" +
+                " JOIN c.users u"+
+                " WHERE c.id = :communityId" +
+                " AND u.id = :userId"
+)
+@NamedQuery(
+        name = "Community.removeUserFromCommunity",
+        query = "DELETE FROM User u" +
+                " WHERE u.id = :userId" +
+                " AND u IN" +
+                    " (SELECT c.users FROM Community c WHERE c.id = :communityId)"
+)
+@NamedQuery(
+        name = "Community.getAllCommunitiesByUserId",
+        query = "SELECT c FROM Community c" +
+                " JOIN c.users u" +
+                " WHERE u.id = :userId"
+)
+@NamedQuery(
+        name = "Community.insertNewUserIntoCommunity",
+        query = "INSERT INTO Community c" +
+                " JOIN c.users u" +
+                " VALUES (:userId, :communityId)"
 )
 
 public class Community {
@@ -41,7 +67,12 @@ public class Community {
 
     private LocalDateTime createdAt;
 
-    @ManyToMany(mappedBy = "communities")
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "usersCommunities",
+            joinColumns = @JoinColumn(name="community_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id")
+    )
     private Set<User> users;
 
     @NotEmpty
