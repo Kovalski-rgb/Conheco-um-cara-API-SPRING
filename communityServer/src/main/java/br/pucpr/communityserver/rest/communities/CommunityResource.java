@@ -55,7 +55,7 @@ public class CommunityResource {
         service.joinCommunity(jwt.decode(token), request);
     }
 
-    @GetMapping
+    @GetMapping("/all")
     @Transactional
     public List<CommunityResponse> listCommunities(){
         return service.listAllCommunities();
@@ -63,6 +63,8 @@ public class CommunityResource {
 
     @PutMapping("{id}")
     @Transactional
+    @SecurityRequirement(name = "JWT-token")
+    @RolesAllowed({"ADMIN"})
     public ResponseEntity<CommunityResponse> editCommunity(
             @RequestParam Long id,
             @Valid @RequestBody CommunityRequest request
@@ -74,6 +76,8 @@ public class CommunityResource {
 
     @DeleteMapping("{id}")
     @Transactional
+    @SecurityRequirement(name = "JWT-token")
+    @RolesAllowed({"ADMIN"})
     public void deleteCommunity(
             @RequestParam Long id
     ){

@@ -47,12 +47,12 @@ import java.util.Set;
                 " JOIN c.users u" +
                 " WHERE u.id = :userId"
 )
-@NamedQuery(
-        name = "Community.insertNewUserIntoCommunity",
-        query = "INSERT INTO Community c" +
-                " JOIN c.users u" +
-                " VALUES (:userId, :communityId)"
-)
+//@NamedQuery(
+//        name = "Community.insertNewUserIntoCommunity",
+//        query = "INSERT INTO Community c" +
+//                " JOIN c.users u" +
+//                " VALUES (:userId, :communityId)"
+//)
 
 public class Community {
 

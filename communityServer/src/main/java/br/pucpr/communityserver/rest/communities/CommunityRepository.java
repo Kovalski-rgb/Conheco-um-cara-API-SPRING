@@ -14,7 +14,7 @@ public interface CommunityRepository extends JpaRepository<Community, Long> {
 
     public User getUserInCommunityById(Long communityId, Long userId);
 
-    public void insertNewUserIntoCommunity(Long communityId, Long userId);
+//    public void insertNewUserIntoCommunity(Long communityId, Long userId);
 
     @Modifying
     public void removeUserFromCommunity(Long communityId, Long userId);
