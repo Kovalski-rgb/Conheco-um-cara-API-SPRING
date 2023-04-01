@@ -9,20 +9,24 @@ import static org.mockito.Mockito.when;
 
 import java.util.Set;
 
+import br.pucpr.authserver.lib.security.JWT;
+import br.pucpr.authserver.rest.users.UserRepository;
+import br.pucpr.authserver.rest.users.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import br.pucpr.authserver.lib.exception.BadRequestException;
 
-public class ArtistServiceTest {
+public class UserServiceTest {
 
-	private ArtistsRepository repository;
-	private ArtistsService service;
+	private JWT jwt;
+	private UserRepository repository;
+	private UserService service;
 
 	@BeforeEach
 	public void setup() {
-		repository = mock(ArtistsRepository.class);
-		service = new ArtistsService(repository);
+		repository = mock(UserRepository.class);
+		service = new UserService(jwt, repository);
 	}
 
 	@Test

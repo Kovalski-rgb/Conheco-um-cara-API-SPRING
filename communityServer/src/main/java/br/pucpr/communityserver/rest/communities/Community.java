@@ -23,9 +23,10 @@ import java.util.Set;
                 " AND c.name = :name"
 )
 @NamedQuery(
-        name="Community.getCommunitiesByCode",
-        query = "SELECT code FROM Community c" +
-                " WHERE code = :code"
+        name="Community.getCommunityById",
+        query = "SELECT c FROM Community c" +
+                " LEFT JOIN FETCH c.users" +
+                " WHERE c.id = :id"
 )
 @NamedQuery(
         name = "Community.getUserInCommunityById",
@@ -35,25 +36,22 @@ import java.util.Set;
                 " AND u.id = :userId"
 )
 @NamedQuery(
-        name = "Community.removeUserFromCommunity",
-        query = "DELETE FROM User u" +
-                " WHERE u.id = :userId" +
-                " AND u IN" +
-                    " (SELECT c.users FROM Community c WHERE c.id = :communityId)"
-)
-@NamedQuery(
         name = "Community.getAllCommunitiesByUserId",
         query = "SELECT c FROM Community c" +
                 " JOIN c.users u" +
                 " WHERE u.id = :userId"
 )
+@NamedQuery(
+        name = "Community.getUsersFromCommunityById",
+        query = "SELECT users FROM Community c" +
+                " WHERE c.id = :id"
+)
 //@NamedQuery(
-//        name = "Community.insertNewUserIntoCommunity",
-//        query = "INSERT INTO Community c" +
-//                " JOIN c.users u" +
-//                " VALUES (:userId, :communityId)"
+//        name = "Community.updateCommunityById",
+//        query = "UPDATE Community c" +
+//                " SET c = :community" +
+//                " WHERE c.id = :id"
 //)
-
 public class Community {
 
     @Id
@@ -83,4 +81,9 @@ public class Community {
         this.description = request.getDescription();
     }
 
+    @Override
+    public String toString() {
+        return "Community{" +
+                "id=" + id;
+    }
 }

@@ -24,6 +24,7 @@ public class JwtTokenFilter extends GenericFilterBean {
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
     throws IOException, ServletException {
 
+        //TODO (?) try-catch jwt.extract for exception [io.jsonwebtoken.ExpiredJwtException] (returns 500 to client)
         final var auth = jwt.extract((HttpServletRequest) req);
         if(auth==null) {
             chain.doFilter(req, res);

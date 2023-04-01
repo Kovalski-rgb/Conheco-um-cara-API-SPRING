@@ -31,6 +31,7 @@ public class UserResource {
         this.jwt = jwt;
     }
 
+    //TODO check testUser route
     @PostMapping("/testUser")
     public ResponseEntity<UserLoginResponse> getTestUser(
             @Valid @RequestBody TestUserRequest credentials

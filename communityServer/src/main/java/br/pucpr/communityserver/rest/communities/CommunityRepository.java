@@ -2,10 +2,10 @@ package br.pucpr.communityserver.rest.communities;
 
 import br.pucpr.communityserver.rest.users.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public interface CommunityRepository extends JpaRepository<Community, Long> {
@@ -14,11 +14,13 @@ public interface CommunityRepository extends JpaRepository<Community, Long> {
 
     public User getUserInCommunityById(Long communityId, Long userId);
 
-//    public void insertNewUserIntoCommunity(Long communityId, Long userId);
+    public Community getCommunityById(Long id);
 
-    @Modifying
-    public void removeUserFromCommunity(Long communityId, Long userId);
+    public Set<User> getUsersFromCommunityById(Long id);
 
     public List<Community> getAllCommunitiesByUserId(Long userId);
+
+//    @Modifying
+//    public void updateCommunityById(Long id, Community community);
 
 }
