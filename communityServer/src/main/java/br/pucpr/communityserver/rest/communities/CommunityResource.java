@@ -3,7 +3,9 @@ package br.pucpr.communityserver.rest.communities;
 import br.pucpr.communityserver.lib.security.JWT;
 import br.pucpr.communityserver.rest.communities.requests.CommunityJoinRequest;
 import br.pucpr.communityserver.rest.communities.requests.CommunityRequest;
+import br.pucpr.communityserver.rest.communities.requests.RequestToggleModerator;
 import br.pucpr.communityserver.rest.communities.responses.CommunityResponse;
+import br.pucpr.communityserver.rest.communities.responses.GetModeratorResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import jakarta.annotation.security.RolesAllowed;
@@ -23,8 +25,8 @@ import java.util.List;
 @RequestMapping("/community")
 public class CommunityResource {
 
-    private CommunityService service;
-    private JWT jwt;
+    private final CommunityService service;
+    private final JWT jwt;
 
     public CommunityResource(CommunityService service, JWT jwt) {
         this.service = service;
@@ -33,13 +35,20 @@ public class CommunityResource {
 
     @PostMapping("/create")
     @Transactional
+    @SecurityRequirement(name = "JWT-token")
+    @RolesAllowed({"USER"})
     public ResponseEntity<CommunityResponse> createCommunity(
+        HttpServletRequest headers,
         @Valid @RequestBody CommunityRequest request
     ){
-        var response = service.saveCommunity(request);
+        String token = headers.getHeader("Authorization");
+        var user = jwt.decode(token);
+
+        var response = service.saveCommunity(user, request);
         if(response == null){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+        service.joinCommunity(user, new CommunityJoinRequest(response.getName(), response.getCode()));
         return ResponseEntity.ok(response);
     }
 
@@ -64,12 +73,14 @@ public class CommunityResource {
     @PutMapping("{id}")
     @Transactional
     @SecurityRequirement(name = "JWT-token")
-    @RolesAllowed({"ADMIN"})
+    @RolesAllowed({"USER", "ADMIN"})
     public ResponseEntity<CommunityResponse> editCommunity(
+            HttpServletRequest headers,
             @RequestParam Long id,
             @Valid @RequestBody CommunityRequest request
     ){
-        var response = service.editCommunity(id, request);
+        String token = headers.getHeader("Authorization");
+        var response = service.editCommunity(jwt.decode(token), id, request);
         if(response==null){ ResponseEntity.status(HttpStatus.NOT_FOUND).build(); }
         return ResponseEntity.ok(response);
     }
@@ -77,11 +88,13 @@ public class CommunityResource {
     @DeleteMapping("{id}")
     @Transactional
     @SecurityRequirement(name = "JWT-token")
-    @RolesAllowed({"ADMIN"})
+    @RolesAllowed({"USER", "ADMIN"})
     public void deleteCommunity(
+            HttpServletRequest headers,
             @RequestParam Long id
     ){
-        service.deleteCommunity(id);
+        String token = headers.getHeader("Authorization");
+        service.deleteCommunity(jwt.decode(token), id);
     }
 
     @PostMapping("/leave")
@@ -105,6 +118,37 @@ public class CommunityResource {
     ){
         String token = headers.getHeader("Authorization");
         return service.listAllCommunitiesFromUser(jwt.decode(token).getId());
+    }
+
+    // moderators
+    @GetMapping("moderators/{id}")
+    @Transactional
+    @SecurityRequirement(name = "JWT-token")
+    @RolesAllowed({"USER"})
+    public ResponseEntity<List<GetModeratorResponse>> listModeratorsFromCommunity(
+        HttpServletRequest headers,
+        @RequestParam @Valid Long communityId
+    ){
+        String token = headers.getHeader("Authorization");
+        var result = service.listAllModeratorsFromCommunity(jwt.decode(token).getId(), communityId);
+        if(result == null){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+        return ResponseEntity.ok(result);
+
+    }
+
+
+    @PostMapping("moderators/toggle")
+    @Transactional
+    @SecurityRequirement(name = "JWT-token")
+    @RolesAllowed({"USER"})
+    public void toggleModeratorUser(
+        HttpServletRequest headers,
+        @RequestBody @Valid RequestToggleModerator request
+    ){
+        String token = headers.getHeader("Authorization");
+        service.toggleModerator(jwt.decode(token), request);
     }
 
 }

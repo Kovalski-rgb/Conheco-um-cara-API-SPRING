@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Data @Entity
@@ -26,6 +27,7 @@ import java.util.Set;
         name="Community.getCommunityById",
         query = "SELECT c FROM Community c" +
                 " LEFT JOIN FETCH c.users" +
+                " LEFT JOIN FETCH c.moderators" +
                 " WHERE c.id = :id"
 )
 @NamedQuery(
@@ -42,8 +44,30 @@ import java.util.Set;
                 " WHERE u.id = :userId"
 )
 @NamedQuery(
-        name = "Community.getUsersFromCommunityById",
+        name = "Community.getAllModeratorsByCommunityId",
+        query = "SELECT moderators FROM Community c" +
+                " WHERE c.id = :communityId"
+)
+@NamedQuery(
+        name = "Community.getModeratorByCommunityAndUser",
+        query = "SELECT moderators FROM Community c" +
+                " JOIN c.moderators m" +
+                " WHERE c.id = :communityId" +
+                " AND m.id = :userId"
+)
+@NamedQuery(
+        name = "Community.getModeratorCountFromCommunityById",
+        query = "SELECT moderators FROM Community c" +
+                " WHERE c.id = :id"
+)
+@NamedQuery(
+        name = "Community.getUserCountFromCommunityById",
         query = "SELECT users FROM Community c" +
+                " WHERE c.id = :id"
+)
+@NamedQuery(
+        name = "Community.deleteCommunityById",
+        query = "DELETE FROM Community c" +
                 " WHERE c.id = :id"
 )
 //@NamedQuery(
@@ -65,13 +89,21 @@ public class Community {
 
     private LocalDateTime createdAt;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = CascadeType.REMOVE)
     @JoinTable(
             name = "usersCommunities",
             joinColumns = @JoinColumn(name="community_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id")
     )
     private Set<User> users;
+
+    @ManyToMany(cascade = CascadeType.REMOVE)
+    @JoinTable(
+            name = "communityModerators",
+            joinColumns = @JoinColumn(name="community_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id")
+    )
+    private Set<User> moderators;
 
     @NotEmpty
     private String code;

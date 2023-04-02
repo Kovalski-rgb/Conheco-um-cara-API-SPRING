@@ -6,7 +6,7 @@ Conheco um cara API, 75% implementado em spring
     - [x] AuthServer
     - [x] P&S_Server
     - [ ] CommunityServer
-       - [ ] Moderators
+       - [x] Moderators
        - [ ] Posts
           - [ ] Products
           - [ ] Services
@@ -18,9 +18,9 @@ Conheco um cara API, 75% implementado em spring
        - [ ] Admin route to get all products (with pagination)
        - [ ] Admin routes on CRUD, by id
     - [ ] CommunityServer
-       - [ ] Change GET /community behaviour to NOT retrieve community codes
-       - [ ] POST /community/create automatically adds the creator to the created community, sets him as moderator
-       - [ ] PUT and DELETE /community/{id} should only be used by community moderators and admins
+       - [ ] Change GET /community/all behaviour to NOT retrieve community codes
+       - [x] POST /community/create automatically adds the creator to the created community, sets him as moderator
+       - [x] PUT and DELETE /community/{id} should only be used by community moderators and admins
  - [ ] Unitary tests
     - [ ] AuthServer
        - [ ] GET /users/me

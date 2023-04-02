@@ -1,9 +1,7 @@
 package br.pucpr.communityserver.rest.users;
 
 import br.pucpr.communityserver.rest.communities.Community;
-import br.pucpr.communityserver.rest.moderators.Moderator;
 import br.pucpr.communityserver.rest.users.requests.UserTokenDTO;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
