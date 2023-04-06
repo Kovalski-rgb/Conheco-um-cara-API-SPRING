@@ -32,9 +32,14 @@ public class CommunityService {
 
         String code = "";
         Community aux = new Community();
+        long count = 0;
         while(aux != null){
+            if(count == 2_821_109_907_456L){
+                throw new ForbiddenException("Community name unavailable, please create your community with another name");
+            }
             int CODE_LENGTH = 8;
             code = generateCode(CODE_LENGTH);
+            count++;
             aux = repository.getCommunitiesByCodeAndName(community.getName(), code);
         }
         var user = new User(userTokenDTO);
@@ -45,6 +50,7 @@ public class CommunityService {
         community.setCreatedAt(LocalDateTime.now());
         community.setCode(code);
         community.setModerators(moderators);
+        community.setPosts(new ArrayList<>());
         return new CommunityResponse(repository.save(community));
     }
 
@@ -69,6 +75,9 @@ public class CommunityService {
             throw new ForbiddenException("User does not have permission to edit this community");
 
         Community communityToBeUpdated = repository.findById(targetCommunityId).get();
+        if(repository.getCommunitiesByCodeAndName(request.getName(), communityToBeUpdated.getCode()) != null){
+            throw new ForbiddenException("Community with another name-code combination found, please chose another name");
+        }
         Community community = new Community(request);
         communityToBeUpdated.setId(targetCommunityId);
         communityToBeUpdated.setName(community.getName());
@@ -114,7 +123,7 @@ public class CommunityService {
         community.getModerators().removeIf(m -> m.getId().intValue() == user.getId().intValue());
         community.getUsers().removeIf(u -> u.getId().intValue() == user.getId().intValue());
 
-        if(repository.getModeratorCountFromCommunityById(communityId).size() == 0){
+        if(repository.getModeratorListFromCommunityById(communityId).size() == 0){
             if(community.getUsers().size() > 0) {
                 for(User u : community.getUsers()){
                     if(!u.getId().equals(tokenDTO.getId())) {
@@ -127,7 +136,7 @@ public class CommunityService {
 
         repository.save(community);
 
-        if(repository.getUserCountFromCommunityById(communityId).size() == 0){
+        if(repository.getUserListFromCommunityById(communityId).size() == 0){
             repository.deleteCommunityById(communityId);
         }
 //        var userList = repository.getUsersFromCommunityById(communityId);
@@ -140,7 +149,7 @@ public class CommunityService {
             throw new NotFoundException("Community not found");
         if(repository.getUserInCommunityById(communityId, userId) == null)
             throw new ForbiddenException("User does not belong to specified community");
-        return repository.getAllModeratorsByCommunityId(communityId)
+        return repository.getModeratorListFromCommunityById(communityId)
                 .stream()
                 .map( u ->
                         new GetModeratorResponse(u.getId())
@@ -190,7 +199,7 @@ public class CommunityService {
         repository.save(community);
     }
 
-    private String generateCode(int size){
+    public String generateCode(int size){
         String baseChars = "abcefghijklmnopqrstuvwxzy0123456789";
         var code = "";
         Random random = new Random();

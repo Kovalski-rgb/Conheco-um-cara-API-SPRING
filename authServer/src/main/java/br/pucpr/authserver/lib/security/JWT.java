@@ -75,7 +75,7 @@ public class JWT {
                 .signWith(Keys.hmacShaKeyFor(settings.getSecret().getBytes()))
                 .serializeToJsonWith(new JacksonSerializer<>())
                 .setIssuedAt(toDate(now))
-                .setExpiration(toDate(now.plusDays(2)))
+                .setExpiration(toDate(now.plusDays(7)))
                 .setIssuer(settings.getIssuer())
                 .setSubject(user.getId().toString())
                 .addClaims(Map.of("user", user))

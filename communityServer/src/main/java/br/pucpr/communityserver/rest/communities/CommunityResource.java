@@ -6,6 +6,8 @@ import br.pucpr.communityserver.rest.communities.requests.CommunityRequest;
 import br.pucpr.communityserver.rest.communities.requests.RequestToggleModerator;
 import br.pucpr.communityserver.rest.communities.responses.CommunityResponse;
 import br.pucpr.communityserver.rest.communities.responses.GetModeratorResponse;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import jakarta.annotation.security.RolesAllowed;
@@ -23,6 +25,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/community")
+@Api(tags = "Community endpoints")
 public class CommunityResource {
 
     private final CommunityService service;
@@ -108,6 +111,8 @@ public class CommunityResource {
         String token = headers.getHeader("Authorization");
         service.leaveCommunity(jwt.decode(token), communityId);
     }
+
+    //TODO create /kick route for admin and mod use only
 
     @GetMapping("/me")
     @Transactional

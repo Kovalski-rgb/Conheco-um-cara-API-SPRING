@@ -2,14 +2,14 @@
 Conheco um cara API, 75% implementado em spring
 
 ### TODO list
- - [ ] Finish functional requisites
+ - [x] Finish functional requisites
     - [x] AuthServer
     - [x] P&S_Server
-    - [ ] CommunityServer
+    - [x] CommunityServer
        - [x] Moderators
-       - [ ] Posts
-          - [ ] Products
-          - [ ] Services
+       - [x] Posts
+          - [x] Products
+          - [x] Services
  - [ ] Finish non-functional requisites
     - [ ] AuthServer
        - [ ] Generate a default admin user
@@ -21,6 +21,9 @@ Conheco um cara API, 75% implementado em spring
        - [ ] Change GET /community/all behaviour to NOT retrieve community codes
        - [x] POST /community/create automatically adds the creator to the created community, sets him as moderator
        - [x] PUT and DELETE /community/{id} should only be used by community moderators and admins
+       - [x] Admins should only have power do delete/edit communities, not interfere inside them (deleting posts, changing mods, etc)
+       - [ ] Admins and moderators should be able to kick users inside communities
+       - [ ] Maybe have a 2 layer hierarchy with leader and moderator, and there being only one leader
  - [ ] Unitary tests
     - [ ] AuthServer
        - [ ] GET /users/me
@@ -41,6 +44,10 @@ Conheco um cara API, 75% implementado em spring
        - [ ] POST /product/register
        - [ ] GET /product/me
     - [ ] CommunityServer (WIP)
+ - [ ] Documentation
+    - [ ] AuthServer routes
+    - [ ] P&S_Server routes
+    - [ ] CommunityServer routes
  - [ ] Stress tests
     - [ ] Entering communities
     - [ ] Creating posts

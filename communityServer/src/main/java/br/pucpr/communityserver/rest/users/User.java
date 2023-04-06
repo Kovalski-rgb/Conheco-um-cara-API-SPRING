@@ -18,7 +18,7 @@ public class User {
     @Id
     private Long id;
 
-    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "users")
+    @ManyToMany(mappedBy = "users")
     private Set<Community> communities;
 
     public User(UserTokenDTO userTokenDTO) {

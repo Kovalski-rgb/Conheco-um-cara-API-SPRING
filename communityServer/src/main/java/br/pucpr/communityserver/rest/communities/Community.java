@@ -2,7 +2,9 @@ package br.pucpr.communityserver.rest.communities;
 
 import br.pucpr.communityserver.rest.communities.requests.CommunityRequest;
 import br.pucpr.communityserver.rest.communities.requests.CommunityJoinRequest;
+import br.pucpr.communityserver.rest.posts.Post;
 import br.pucpr.communityserver.rest.users.User;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
@@ -56,12 +58,12 @@ import java.util.Set;
                 " AND m.id = :userId"
 )
 @NamedQuery(
-        name = "Community.getModeratorCountFromCommunityById",
+        name = "Community.getModeratorListFromCommunityById",
         query = "SELECT moderators FROM Community c" +
                 " WHERE c.id = :id"
 )
 @NamedQuery(
-        name = "Community.getUserCountFromCommunityById",
+        name = "Community.getUserListFromCommunityById",
         query = "SELECT users FROM Community c" +
                 " WHERE c.id = :id"
 )
@@ -104,6 +106,11 @@ public class Community {
             inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id")
     )
     private Set<User> moderators;
+
+    //TODO check why [cascade = CascadeType.ALL, orphanRemoval = true] does not guarantee that deleting a community
+    // will also delete all created posts, fix this
+    @OneToMany(mappedBy = "community", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Post> posts;
 
     @NotEmpty
     private String code;
