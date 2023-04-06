@@ -1,9 +1,6 @@
 package br.pucpr.communityserver.lib.security;
 
-import br.pucpr.communityserver.rest.users.User;
 import br.pucpr.communityserver.rest.users.requests.UserTokenDTO;
-import br.pucpr.communityserver.rest.users.responses.RoleResponse;
-import br.pucpr.communityserver.rest.users.responses.UserLoginResponse;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.jackson.io.JacksonDeserializer;
 import io.jsonwebtoken.jackson.io.JacksonSerializer;

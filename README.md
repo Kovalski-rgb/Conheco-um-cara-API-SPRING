@@ -15,15 +15,17 @@ Conheco um cara API, 75% implementado em spring
        - [ ] Generate a default admin user
        - [ ] Admins toggle other admin roles
     - [ ] P&S_Server
-       - [ ] Admin route to get all products (with pagination)
+       - [ ] Admin route to get all products & services (with pagination)
        - [ ] Admin routes on CRUD, by id
     - [ ] CommunityServer
-       - [ ] Change GET /community/all behaviour to NOT retrieve community codes
+       - [x] Route to get all info about one community, admin use only
+       - [x] Route to get all members from community
+       - [x] Change GET /community/all behaviour to NOT retrieve community codes
        - [x] POST /community/create automatically adds the creator to the created community, sets him as moderator
        - [x] PUT and DELETE /community/{id} should only be used by community moderators and admins
        - [x] Admins should only have power do delete/edit communities, not interfere inside them (deleting posts, changing mods, etc)
-       - [ ] Admins and moderators should be able to kick users inside communities
-       - [ ] Maybe have a 2 layer hierarchy with leader and moderator, and there being only one leader
+       - [x] Admins and moderators should be able to kick users inside communities
+       - [ ] When deleting a community, delete all its posts too
  - [ ] Unitary tests
     - [ ] AuthServer
        - [ ] GET /users/me

@@ -7,9 +7,11 @@ import br.pucpr.communityserver.rest.communities.requests.CommunityRequest;
 import br.pucpr.communityserver.rest.communities.requests.RequestToggleModerator;
 import br.pucpr.communityserver.rest.communities.responses.CommunityResponse;
 import br.pucpr.communityserver.rest.communities.responses.GetModeratorResponse;
+import br.pucpr.communityserver.rest.communities.responses.MultipleCommunitiesResponse;
 import br.pucpr.communityserver.rest.users.User;
 import br.pucpr.communityserver.rest.users.UserRepository;
 import br.pucpr.communityserver.rest.users.requests.UserTokenDTO;
+import br.pucpr.communityserver.rest.users.responses.UserResponse;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -54,13 +56,9 @@ public class CommunityService {
         return new CommunityResponse(repository.save(community));
     }
 
-    public List<CommunityResponse> listAllCommunities(){
+    public List<MultipleCommunitiesResponse> listAllCommunities(){
         List<Community> communities = repository.findAll();
-        List<CommunityResponse> response = new ArrayList<>();
-        for(Community c : communities){
-            response.add(new CommunityResponse(c));
-        }
-        return response;
+        return communities.stream().map(MultipleCommunitiesResponse::new).collect(Collectors.toList());
     }
 
     public List<CommunityResponse> listAllCommunitiesFromUser(Long userId){
@@ -112,12 +110,28 @@ public class CommunityService {
         repository.save(community);
     }
 
+    public void kickFromCommunity(UserTokenDTO userDTO, Long userId, Long communityId){
+        if(!repository.existsById(communityId))
+            throw new NotFoundException("Community not found");
+        if(repository.getUserInCommunityById(communityId, userId) == null)
+            throw new ForbiddenException("Target user does not belong to specified community");
+
+        if(repository.getModeratorByCommunityAndUser(communityId, userDTO.getId()) != null ||
+                userDTO.getRoles().contains("ADMIN"))
+        {
+            var aux = new UserTokenDTO();
+            aux.setId(userId);
+            leaveCommunity(aux, communityId);
+            return;
+        }
+        throw new ForbiddenException("User does not have privileges to kick another user");
+    }
 
     public void leaveCommunity(UserTokenDTO tokenDTO, Long communityId) {
         if(!repository.existsById(communityId)) throw new NotFoundException("Community not found");
+        if(repository.getUserInCommunityById(communityId, tokenDTO.getId()) == null) throw new NotFoundException("User not found inside community");
 
         var community = repository.getCommunityById(communityId);
-        if(repository.getUserInCommunityById(communityId, tokenDTO.getId()) == null) throw new NotFoundException("User not found inside community");
         var user = userRepository.findById(tokenDTO.getId()).get();
 
         community.getModerators().removeIf(m -> m.getId().intValue() == user.getId().intValue());
@@ -144,6 +158,10 @@ public class CommunityService {
 //        repository.updateCommunityById(communityId, community);
     }
 
+    public CommunityResponse getCommunityById(Long id){
+        return repository.existsById(id) ? new CommunityResponse(repository.findById(id).get()) : null;
+    }
+
     public List<GetModeratorResponse> listAllModeratorsFromCommunity(Long userId, Long communityId){
         if(!repository.existsById(communityId))
             throw new NotFoundException("Community not found");
@@ -154,6 +172,16 @@ public class CommunityService {
                 .map( u ->
                         new GetModeratorResponse(u.getId())
                 ).collect(Collectors.toList());
+    }
+
+
+    public List<UserResponse> listMembersFromCommunity(Long userId, Long communityId){
+        if(!repository.existsById(communityId))
+            throw new NotFoundException("Community not found");
+        if(repository.getUserInCommunityById(communityId, userId) == null)
+            throw new ForbiddenException("User does not belong to specified community");
+        return repository.getUserListFromCommunityById(communityId)
+                .stream().map(UserResponse::new).collect(Collectors.toList());
     }
 
     public void toggleModerator(UserTokenDTO userDTO, RequestToggleModerator request){

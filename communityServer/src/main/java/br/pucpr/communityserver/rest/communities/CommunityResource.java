@@ -6,8 +6,12 @@ import br.pucpr.communityserver.rest.communities.requests.CommunityRequest;
 import br.pucpr.communityserver.rest.communities.requests.RequestToggleModerator;
 import br.pucpr.communityserver.rest.communities.responses.CommunityResponse;
 import br.pucpr.communityserver.rest.communities.responses.GetModeratorResponse;
+import br.pucpr.communityserver.rest.communities.responses.MultipleCommunitiesResponse;
+import br.pucpr.communityserver.rest.users.User;
+import br.pucpr.communityserver.rest.users.responses.UserResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.models.Response;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import jakarta.annotation.security.RolesAllowed;
@@ -69,8 +73,35 @@ public class CommunityResource {
 
     @GetMapping("/all")
     @Transactional
-    public List<CommunityResponse> listCommunities(){
-        return service.listAllCommunities();
+    public ResponseEntity<List<MultipleCommunitiesResponse>> listCommunities(){
+        return ResponseEntity.ok(service.listAllCommunities());
+    }
+
+    @GetMapping("/{communityId}")
+    @Transactional
+    @SecurityRequirement(name = "JWT-token")
+    @RolesAllowed({"ADMIN"})
+    public ResponseEntity<CommunityResponse> getCommunityById(
+            @RequestParam @Valid Long communityId
+    ){
+        return ResponseEntity.ok(service.getCommunityById(communityId));
+    }
+
+    @GetMapping("{communityId}/members/")
+    @Transactional
+    @SecurityRequirement(name = "JWT-token")
+    @RolesAllowed({"USER"})
+    public ResponseEntity<List<UserResponse>> listMembersFromCommunity(
+            HttpServletRequest headers,
+            @RequestParam @Valid Long communityId
+    ){
+        String token = headers.getHeader("Authorization");
+        var result = service.listMembersFromCommunity(jwt.decode(token).getId(), communityId);
+        if(result == null){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+        return ResponseEntity.ok(result);
+
     }
 
     @PutMapping("{id}")
@@ -112,8 +143,18 @@ public class CommunityResource {
         service.leaveCommunity(jwt.decode(token), communityId);
     }
 
-    //TODO create /kick route for admin and mod use only
-
+    @PostMapping("/{communityId}/kick/{userId}")
+    @Transactional
+    @SecurityRequirement(name = "JWT-token")
+    @RolesAllowed({"USER", "ADMIN"})
+    public void kickUserFromCommunity(
+            HttpServletRequest headers,
+            @RequestParam Long communityId,
+            @RequestParam Long userId
+    ){
+        String token = headers.getHeader("Authorization");
+        service.kickFromCommunity(jwt.decode(token), userId, communityId);
+    }
     @GetMapping("/me")
     @Transactional
     @SecurityRequirement(name = "JWT-token")
@@ -125,8 +166,7 @@ public class CommunityResource {
         return service.listAllCommunitiesFromUser(jwt.decode(token).getId());
     }
 
-    // moderators
-    @GetMapping("moderators/{id}")
+    @GetMapping("{communityId}/moderators/")
     @Transactional
     @SecurityRequirement(name = "JWT-token")
     @RolesAllowed({"USER"})
