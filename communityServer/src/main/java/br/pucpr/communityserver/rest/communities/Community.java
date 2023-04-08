@@ -20,6 +20,11 @@ import java.util.Set;
 @NoArgsConstructor
 
 @NamedQuery(
+        name = "Community.getCodesFromAllCommunitiesByName",
+        query = "SELECT c.code FROM Community c" +
+                " WHERE c.name = :name"
+)
+@NamedQuery(
         name="Community.getCommunitiesByCodeAndName",
         query = "SELECT c FROM Community c" +
                 " WHERE c.code = :code" +
@@ -79,6 +84,8 @@ import java.util.Set;
 //                " WHERE c.id = :id"
 //)
 public class Community {
+
+    public static int CODE_LENGTH = 8;
 
     @Id
     @GeneratedValue

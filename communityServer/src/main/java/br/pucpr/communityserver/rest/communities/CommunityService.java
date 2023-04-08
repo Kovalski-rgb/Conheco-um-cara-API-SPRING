@@ -32,17 +32,19 @@ public class CommunityService {
     public CommunityResponse saveCommunity(UserTokenDTO userTokenDTO, CommunityRequest communityRequest){
         Community community = new Community(communityRequest);
 
-        String code = "";
-        Community aux = new Community();
+        var allCodes = repository.getCodesFromAllCommunitiesByName(communityRequest.getName());
+
+        String code = generateCode(Community.CODE_LENGTH);
         long count = 0;
-        while(aux != null){
+
+        while(allCodes.contains(code)){
             if(count == 2_821_109_907_456L){
+                // not that this'll be triggered any time soon, you'd need around 2,147,483,647 communities with the same name
+                // to "break" a set
                 throw new ForbiddenException("Community name unavailable, please create your community with another name");
             }
-            int CODE_LENGTH = 8;
-            code = generateCode(CODE_LENGTH);
+            code = generateCode(Community.CODE_LENGTH);
             count++;
-            aux = repository.getCommunitiesByCodeAndName(community.getName(), code);
         }
         var user = new User(userTokenDTO);
         if(!userRepository.existsById(user.getId())) userRepository.save(user);

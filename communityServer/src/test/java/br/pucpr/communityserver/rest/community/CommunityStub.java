@@ -8,7 +8,7 @@ import java.util.Set;
 
 public class CommunityStub {
 
-	public static CommunityRequest getCommunity1() {
+	public static CommunityRequest getCommunityRequest1() {
 		var request = new CommunityRequest();
 		request.setName("community1");
 		request.setDescription("test community 1");

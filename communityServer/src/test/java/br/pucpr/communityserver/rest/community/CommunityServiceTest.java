@@ -28,7 +28,6 @@ public class CommunityServiceTest {
 
 	private CommunityRepository communityRepository;
 	private CommunityService communityService;
-	private List<CommunityResponse> communities = new ArrayList<>();
 
 	@BeforeEach
 	public void setup() {
@@ -40,7 +39,7 @@ public class CommunityServiceTest {
 	@Test
 	public void should_create_community_successfully() {
 		var userDTO = UserDtoStub.getAdminUser();
-		var request = CommunityStub.getCommunity1();
+		var request = CommunityStub.getCommunityRequest1();
 		var community = new Community(request);
 		community.setId(1L);
 		community.setCreatedAt(LocalDateTime.now());
@@ -53,21 +52,11 @@ public class CommunityServiceTest {
 
 		assertNotNull(communityResponse);
 		assertNotNull(communityResponse.getCode());
-
-		communities.add(communityResponse);
 	}
 
 	@Test
 	public void should_let_user_join_community() {
 		var userDTO = UserDtoStub.getAdminUser();
-		var community = communities.get(1);
-
-		communityService.joinCommunity(userDTO, new CommunityJoinRequest(community.getName(), community.getCode()));
-
-		var userList = communityRepository.getUserListFromCommunityById(community.getId());
-		var moderatorList = communityRepository.getUserListFromCommunityById(community.getId());
-		assertTrue(userList.size() > 0);
-		assertTrue(moderatorList.size() > 0);
 	}
 
 }

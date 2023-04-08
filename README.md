@@ -33,7 +33,7 @@ Conheco um cara API, 75% implementado em spring
        - [ ] DELETE /users/me
        - [ ] POST /users/testUser
        - [ ] POST /users/login
-       - [ ] POST /users/create
+       - [x] POST /users/create
        - [ ] GET /users/{id} (admin perm)
        - [ ] DELETE /users/{id} (admin perm)
     - [ ] P&S_Server
@@ -45,7 +45,25 @@ Conheco um cara API, 75% implementado em spring
        - [ ] DELETE /product
        - [ ] POST /product/register
        - [ ] GET /product/me
-    - [ ] CommunityServer (WIP)
+    - [ ] CommunityServer
+       - [ ] PUT /community/{id}
+       - [ ] DELETE /community/{id}
+       - [ ] POST /community/{communityId}/kick/{userId}
+       - [ ] POST /community/moderators/toggle
+       - [ ] POST /community/leave
+       - [ ] POST /community/join
+       - [ ] POST /community/create
+       - [ ] GET /community/create
+       - [ ] GET /community/{communityId}/moderators/
+       - [ ] GET /community/{communityId}/members/
+       - [ ] GET /community/me
+       - [ ] GET /community/all
+       - [ ] PUT /post/{postId}/community/{communityId}
+       - [ ] DELETE /post/{postId}/community/{communityId}
+       - [ ] POST /post/create
+       - [ ] GET /post/me
+       - [ ] GET /post/community/{id}
+       - [ ] GET /post/community/{id}/me
  - [ ] Documentation
     - [ ] AuthServer routes
     - [ ] P&S_Server routes

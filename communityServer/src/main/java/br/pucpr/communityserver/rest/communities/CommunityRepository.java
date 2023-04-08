@@ -11,6 +11,7 @@ import java.util.Set;
 @Repository
 public interface CommunityRepository extends JpaRepository<Community, Long> {
 
+    public Set<String> getCodesFromAllCommunitiesByName(String name);
     /**
      * Returns a community that matches passed Name and Code <br>
      * Lazily loads User and Moderator lists
