@@ -101,14 +101,22 @@ public class UserServiceTest {
 	@Test
 	public void getUserShouldThrowNotFoundExceptionWhenIdIsNotFound(){
 		var request = UserMock.getUser();
-		request.setPassword("wrongPassword#234");
 		when(repository.existsById(any())).thenReturn(false);
 		when(repository.findById(any())).thenReturn(Optional.of(UserMock.getUser()));
 
 		assertThrows(NotFoundException.class, ()-> {
 			service.getUser(request.getId());
 		});
+	}
 
+	@Test
+	public void deleteUserShouldThrowNotFoundExceptionWhenIdIsNotFound(){
+		var request = UserMock.getUser();
+		when(repository.existsById(any())).thenReturn(false);
+
+		assertThrows(NotFoundException.class, ()-> {
+			service.deleteUser(request.getId());
+		});
 	}
 
 }

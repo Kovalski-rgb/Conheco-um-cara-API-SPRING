@@ -30,11 +30,11 @@ Conheco um cara API, 75% implementado em spring
     - [ ] AuthServer
        - [x] GET /users/me
        - [ ] PUT /users/me
-       - [ ] DELETE /users/me
+       - [x] DELETE /users/me
        - [x] POST /users/login
        - [x] POST /users/create
        - [x] GET /users/{id} (admin perm)
-       - [ ] DELETE /users/{id} (admin perm)
+       - [x] DELETE /users/{id} (admin perm)
     - [ ] P&S_Server
        - [ ] PUT /service
        - [ ] DELETE /service
