@@ -69,7 +69,7 @@ public class UserService {
 
     public List<UserGetResponse> listAllUsers(){
         var users = repository.findAll(Sort.by(Sort.Order.asc("id")));
-        return users.stream().map(u -> new UserGetResponse(u)).toList();
+        return users.stream().map(UserGetResponse::new).toList();
     }
 
 

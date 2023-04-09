@@ -11,6 +11,8 @@ import br.pucpr.authserver.lib.security.JWT;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Optional;
+
 public class UserServiceTest {
 
 	private JWT jwt;
@@ -81,6 +83,32 @@ public class UserServiceTest {
 		assertThrows(NotFoundException.class, () -> {
 			service.login(request);
 		});
+	}
+
+	@Test
+	public void getUserShouldReturnReturnValidUserById(){
+		var request = UserMock.getUser();
+		when(repository.existsById(any())).thenReturn(true);
+		when(repository.findById(any())).thenReturn(Optional.of(UserMock.getUser()));
+
+		var result = service.getUser(request.getId());
+
+		assertEquals(request.getId(), result.getId());
+		assertEquals(request.getEmail(), result.getEmail());
+		assertEquals(request.getName(), result.getName());
+	}
+
+	@Test
+	public void getUserShouldThrowNotFoundExceptionWhenIdIsNotFound(){
+		var request = UserMock.getUser();
+		request.setPassword("wrongPassword#234");
+		when(repository.existsById(any())).thenReturn(false);
+		when(repository.findById(any())).thenReturn(Optional.of(UserMock.getUser()));
+
+		assertThrows(NotFoundException.class, ()-> {
+			service.getUser(request.getId());
+		});
+
 	}
 
 }

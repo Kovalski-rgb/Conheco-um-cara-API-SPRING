@@ -105,9 +105,6 @@ public class JWT {
                 "Test_User",
                 "Test_User",
                 testUser.getRoles()
-//                        .stream()
-//                        .map(RoleResponse::new)
-//                        .collect(Collectors.toSet())
         );
     }
 

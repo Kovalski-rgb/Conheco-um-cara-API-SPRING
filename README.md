@@ -28,13 +28,12 @@ Conheco um cara API, 75% implementado em spring
        - [ ] When deleting a community, delete all its posts too
  - [ ] Unitary tests
     - [ ] AuthServer
-       - [ ] GET /users/me
+       - [x] GET /users/me
        - [ ] PUT /users/me
        - [ ] DELETE /users/me
-       - [ ] POST /users/testUser
        - [x] POST /users/login
        - [x] POST /users/create
-       - [ ] GET /users/{id} (admin perm)
+       - [x] GET /users/{id} (admin perm)
        - [ ] DELETE /users/{id} (admin perm)
     - [ ] P&S_Server
        - [ ] PUT /service
