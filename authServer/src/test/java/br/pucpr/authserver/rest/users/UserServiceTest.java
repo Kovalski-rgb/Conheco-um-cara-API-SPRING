@@ -1,13 +1,12 @@
 package br.pucpr.authserver.rest.users;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import br.pucpr.authserver.lib.exception.ForbiddenException;
+import br.pucpr.authserver.lib.exception.NotFoundException;
 import br.pucpr.authserver.lib.security.JWT;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +19,7 @@ public class UserServiceTest {
 
 	@BeforeEach
 	public void setup() {
+		jwt = mock(JWT.class);
 		repository = mock(UserRepository.class);
 		service = new UserService(jwt, repository);
 	}
@@ -46,5 +46,41 @@ public class UserServiceTest {
 			service.createUser(request);
 		});
 	}
-	
+
+	@Test
+	public void loginShouldLogUserIn(){
+		var request = UserMock.getLoginRequest();
+		when(repository.getUserByEmail(any())).thenReturn(UserMock.getUser());
+		when(jwt.createToken(any())).thenReturn("token");
+
+		var result = service.login(request);
+		assertFalse(result.getToken().isEmpty());
+		assertNotNull(result.getId());
+		assertEquals(request.getEmail(), result.getEmail());
+	}
+
+
+	@Test
+	public void loginShouldThrowNotFoundExceptionWhenEmailIsNotRegistered(){
+		var request = UserMock.getLoginRequest();
+		when(repository.getUserByEmail(any())).thenReturn(null);
+		when(jwt.createToken(any())).thenReturn("token");
+
+		assertThrows(NotFoundException.class, () -> {
+			service.login(request);
+		});
+	}
+
+	@Test
+	public void loginShouldThrowNotFoundExceptionWhenPasswordDontMatch(){
+		var request = UserMock.getLoginRequest();
+		request.setPassword("wrongPassword#234");
+		when(repository.getUserByEmail(any())).thenReturn(UserMock.getUser());
+		when(jwt.createToken(any())).thenReturn("token");
+
+		assertThrows(NotFoundException.class, () -> {
+			service.login(request);
+		});
+	}
+
 }

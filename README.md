@@ -32,7 +32,7 @@ Conheco um cara API, 75% implementado em spring
        - [ ] PUT /users/me
        - [ ] DELETE /users/me
        - [ ] POST /users/testUser
-       - [ ] POST /users/login
+       - [x] POST /users/login
        - [x] POST /users/create
        - [ ] GET /users/{id} (admin perm)
        - [ ] DELETE /users/{id} (admin perm)
