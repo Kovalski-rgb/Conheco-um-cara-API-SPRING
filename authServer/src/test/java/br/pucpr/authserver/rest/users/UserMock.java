@@ -2,6 +2,7 @@ package br.pucpr.authserver.rest.users;
 
 import br.pucpr.authserver.rest.users.requests.CreateUserRequest;
 import br.pucpr.authserver.rest.users.requests.LoginRequest;
+import br.pucpr.authserver.rest.users.requests.UpdateUserRequest;
 import br.pucpr.authserver.rest.users.responses.UserLoginResponse;
 
 import java.util.HashSet;
@@ -51,4 +52,12 @@ public class UserMock {
         return result;
     }
 
+    public static UpdateUserRequest getUpdateUserRequest(){
+        return new UpdateUserRequest(
+                "UpdateName",
+                "UpdatePassword#123",
+                "UpdateEmail@email.com",
+                "98765-4321"
+        );
+    }
 }

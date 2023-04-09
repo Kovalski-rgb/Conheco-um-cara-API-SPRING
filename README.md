@@ -27,9 +27,9 @@ Conheco um cara API, 75% implementado em spring
        - [x] Admins and moderators should be able to kick users inside communities
        - [ ] When deleting a community, delete all its posts too
  - [ ] Unitary tests
-    - [ ] AuthServer
+    - [x] AuthServer
        - [x] GET /users/me
-       - [ ] PUT /users/me
+       - [x] PUT /users/me
        - [x] DELETE /users/me
        - [x] POST /users/login
        - [x] POST /users/create

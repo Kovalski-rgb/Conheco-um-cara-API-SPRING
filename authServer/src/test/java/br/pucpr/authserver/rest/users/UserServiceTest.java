@@ -37,6 +37,7 @@ public class UserServiceTest {
 		assertEquals(result.getName(), request.getName());
 		assertEquals(result.getEmail(), request.getEmail());
 	}
+
 	@Test
 	public void createUserShouldThrowForbiddenWhenEmailIsRegistered() {
 		var request = UserMock.getUserRequest();
@@ -117,6 +118,36 @@ public class UserServiceTest {
 		assertThrows(NotFoundException.class, ()-> {
 			service.deleteUser(request.getId());
 		});
+	}
+
+	@Test
+	public void updateUserShouldReturnUpdatedUser(){
+		var request = UserMock.getUpdateUserRequest();
+		var expect = UserMock.getUser();
+		expect.setUpdatedData(request);
+		when(repository.existsById(any())).thenReturn(true);
+		when(repository.save(any())).thenReturn(expect);
+		when(repository.findById(any())).thenReturn(Optional.of(UserMock.getUser()));
+
+		var result = service.updateUser(1L, request);
+
+		assertEquals(result.getEmail(), expect.getEmail());
+		assertEquals(result.getName(), expect.getName());
+	}
+
+	@Test
+	public void updateUserShouldThrowNotFoundExceptionWhenIdIsNotFound(){
+		var request = UserMock.getUpdateUserRequest();
+		var expect = UserMock.getUser();
+		expect.setUpdatedData(request);
+		when(repository.existsById(any())).thenReturn(false);
+		when(repository.save(any())).thenReturn(expect);
+		when(repository.findById(any())).thenReturn(Optional.of(UserMock.getUser()));
+
+		assertThrows(NotFoundException.class, () ->{
+			service.updateUser(1L, request);
+		});
+
 	}
 
 }
