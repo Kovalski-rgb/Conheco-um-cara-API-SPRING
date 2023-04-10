@@ -2,6 +2,8 @@ package br.pucpr.productAndServiceserver.rest.services;
 
 import br.pucpr.productAndServiceserver.lib.security.JWT;
 import br.pucpr.productAndServiceserver.rest.services.request.ServiceRequest;
+import br.pucpr.productAndServiceserver.rest.services.request.UpdateServiceRequestDTO;
+import br.pucpr.productAndServiceserver.rest.services.response.ServicePaginationResponse;
 import br.pucpr.productAndServiceserver.rest.services.response.ServiceResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.annotation.security.RolesAllowed;
@@ -12,14 +14,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/service")
 public class ServiceResource {
 
-    private JWT jwt;
-    private ServiceService service;
+    private final JWT jwt;
+    private final ServiceService service;
 
     public ServiceResource(JWT jwt, ServiceService service) {
         this.jwt = jwt;
@@ -40,25 +40,26 @@ public class ServiceResource {
                 ResponseEntity.ok(response);
     }
 
-    @GetMapping("/me")
+    @GetMapping("/me/{page}")
     @Transactional
     @SecurityRequirement(name="JWT-token")
     @RolesAllowed("USER")
-    public List<ServiceResponse> register(
-            HttpServletRequest headers
+    public ResponseEntity<ServicePaginationResponse> getMyServices(
+            HttpServletRequest headers,
+            @Valid @PathVariable Integer page
     ){
         var userDTO = jwt.decode(headers.getHeader("Authorization"));
-        return service.listFromUser(userDTO.getId());
+        return ResponseEntity.ok(service.listFromUser(userDTO.getId(), page));
     }
 
-    @PutMapping
+    @PutMapping("/{id}")
     @Transactional
     @SecurityRequirement(name="JWT-token")
     @RolesAllowed("USER")
     public ResponseEntity<ServiceResponse> update(
             HttpServletRequest headers,
-            @Valid @RequestParam Long id,
-            @Valid @RequestBody ServiceRequest request
+            @Valid @PathVariable Long id,
+            @Valid @RequestBody UpdateServiceRequestDTO request
     ){
         var userDTO = jwt.decode(headers.getHeader("Authorization"));
         var result = service.updateService(userDTO.getId(), id, request);
@@ -66,13 +67,13 @@ public class ServiceResource {
                 ResponseEntity.ok(result);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     @Transactional
     @SecurityRequirement(name="JWT-token")
     @RolesAllowed("USER")
     public void delete(
             HttpServletRequest headers,
-            @Valid @RequestParam Long id
+            @Valid @PathVariable Long id
     ){
         var userDTO = jwt.decode(headers.getHeader("Authorization"));
         service.deleteService(userDTO.getId(), id);

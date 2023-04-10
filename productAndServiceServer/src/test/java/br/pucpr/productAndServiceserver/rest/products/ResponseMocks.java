@@ -1,6 +1,6 @@
 package br.pucpr.productAndServiceserver.rest.products;
 
-import br.pucpr.productAndServiceserver.rest.products.response.AdminPaginationResponse;
+import br.pucpr.productAndServiceserver.rest.products.response.AdminProductPaginationResponse;
 import br.pucpr.productAndServiceserver.rest.products.response.ProductPaginationResponse;
 import br.pucpr.productAndServiceserver.rest.products.response.ProductResponse;
 
@@ -21,11 +21,11 @@ public class ResponseMocks {
         );
     }
 
-    public static AdminPaginationResponse getAdminPaginationResponse(){
-        return new AdminPaginationResponse(
+    public static AdminProductPaginationResponse getAdminPaginationResponse(){
+        return new AdminProductPaginationResponse(
                 0,
                 0,
-                Stream.of(DataMocks.getProduct()).collect(Collectors.toList())
+                Stream.of(ProductMocks.getProduct()).collect(Collectors.toList())
         );
     }
 
@@ -33,7 +33,7 @@ public class ResponseMocks {
         return new ProductPaginationResponse(
                 0,
                 0,
-                Stream.of(new ProductResponse(DataMocks.getProduct())).collect(Collectors.toList())
+                Stream.of(new ProductResponse(ProductMocks.getProduct())).collect(Collectors.toList())
         );
     }
 

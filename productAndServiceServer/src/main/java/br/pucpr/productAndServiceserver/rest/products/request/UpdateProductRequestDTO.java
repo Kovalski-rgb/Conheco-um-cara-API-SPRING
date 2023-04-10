@@ -1,4 +1,4 @@
-package br.pucpr.productAndServiceserver.rest.services.request;
+package br.pucpr.productAndServiceserver.rest.products.request;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -7,18 +7,12 @@ import lombok.NoArgsConstructor;
 
 import java.util.Set;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class ServiceRequest {
+@Data @AllArgsConstructor @NoArgsConstructor
+public class UpdateProductRequestDTO {
 
-    @NotNull
     private String name;
-    @NotNull
     private String description;
-    @NotNull
     private Double price;
-    @NotNull
-    private Set<String> serviceType;
+    private Set<String> productType;
 
 }

@@ -2,7 +2,7 @@ package br.pucpr.productAndServiceserver.rest.products;
 
 import br.pucpr.productAndServiceserver.lib.security.JWT;
 import br.pucpr.productAndServiceserver.rest.products.request.ProductRequest;
-import br.pucpr.productAndServiceserver.rest.products.response.AdminPaginationResponse;
+import br.pucpr.productAndServiceserver.rest.products.request.UpdateProductRequestDTO;
 import br.pucpr.productAndServiceserver.rest.products.response.ProductPaginationResponse;
 import br.pucpr.productAndServiceserver.rest.products.response.ProductResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -13,8 +13,6 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/product")
@@ -82,7 +80,7 @@ public class ProductResource {
     public ResponseEntity<ProductResponse> update(
             HttpServletRequest headers,
             @Valid @PathVariable Long id,
-            @Valid @RequestBody ProductRequest request
+            @Valid @RequestBody UpdateProductRequestDTO request
     ){
         var userDTO = jwt.decode(headers.getHeader("Authorization"));
         var result = service.updateProduct(userDTO.getId(), id, request);

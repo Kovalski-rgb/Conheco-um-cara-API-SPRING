@@ -3,7 +3,8 @@ package br.pucpr.productAndServiceserver.rest.products;
 import br.pucpr.productAndServiceserver.lib.exception.ForbiddenException;
 import br.pucpr.productAndServiceserver.lib.exception.NotFoundException;
 import br.pucpr.productAndServiceserver.rest.products.request.ProductRequest;
-import br.pucpr.productAndServiceserver.rest.products.response.AdminPaginationResponse;
+import br.pucpr.productAndServiceserver.rest.products.request.UpdateProductRequestDTO;
+import br.pucpr.productAndServiceserver.rest.products.response.AdminProductPaginationResponse;
 import br.pucpr.productAndServiceserver.rest.products.response.ProductPaginationResponse;
 import br.pucpr.productAndServiceserver.rest.products.response.ProductResponse;
 import br.pucpr.productAndServiceserver.rest.users.User;
@@ -19,7 +20,6 @@ public class ProductService {
 
     private final ProductRepository repository;
     private final UserRepository userRepository;
-
     private final Integer pageSize = 20;
 
     public ProductService(ProductRepository repository, UserRepository userRepository) {
@@ -40,8 +40,8 @@ public class ProductService {
         return repository.save(product);
     }
 
-    public AdminPaginationResponse listAllProducts(Integer page){
-        var response = new AdminPaginationResponse();
+    public AdminProductPaginationResponse listAllProducts(Integer page){
+        var response = new AdminProductPaginationResponse();
         response.setProducts(repository.selectAllProducts(PageRequest.of(page, pageSize)));
         response.setPageNumber(page);
         response.setLastPage(repository.countAllProducts()/pageSize);
@@ -59,7 +59,7 @@ public class ProductService {
         return response;
     }
 
-    public ProductResponse updateProduct(Long userId, Long productId, ProductRequest request){
+    public ProductResponse updateProduct(Long userId, Long productId, UpdateProductRequestDTO request){
         if(!repository.existsById(productId)) throw new NotFoundException("Product not found");
         var product = repository.findById(productId).get();
         if(!product.getOwner().getId().equals(userId)) throw new ForbiddenException("This product is not from the current logged user");

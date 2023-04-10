@@ -1,6 +1,7 @@
 package br.pucpr.productAndServiceserver.rest.products;
 
 import br.pucpr.productAndServiceserver.rest.products.request.ProductRequest;
+import br.pucpr.productAndServiceserver.rest.products.request.UpdateProductRequestDTO;
 import br.pucpr.productAndServiceserver.rest.users.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
@@ -70,7 +71,7 @@ public class Product {
         return this;
     }
 
-    public void update(ProductRequest product){
+    public void update(UpdateProductRequestDTO product){
         if(product.getName() != null && !product.getName().isEmpty()) this.name = product.getName();
         if(product.getDescription() != null) this.description = product.getDescription();
         if(product.getPrice() != null  && !product.getPrice().isNaN())this.price = product.getPrice();

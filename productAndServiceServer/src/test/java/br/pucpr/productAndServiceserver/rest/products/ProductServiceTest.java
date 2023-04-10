@@ -12,7 +12,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -33,7 +32,7 @@ public class ProductServiceTest {
 	@Test
 	public void registerShouldSaveAProductSuccessfullyWithExistingUser() {
 		when(userRepository.existsById(any())).thenReturn(true);
-		when(repository.save(any())).thenReturn(DataMocks.getProduct());
+		when(repository.save(any())).thenReturn(ProductMocks.getProduct());
 		var result = service.register(UserMock.getUserTokenDTO(), RequestMocks.getProductRequest());
 
 		assertNotNull(result.getOwner());
@@ -43,7 +42,7 @@ public class ProductServiceTest {
 	@Test
 	public void registerShouldSaveAProductSuccessfullyWithNewUser() {
 		when(userRepository.existsById(any())).thenReturn(false);
-		when(repository.save(any())).thenReturn(DataMocks.getProduct());
+		when(repository.save(any())).thenReturn(ProductMocks.getProduct());
 		when(userRepository.save(any())).thenReturn(UserMock.getUser());
 		var result = service.register(UserMock.getUserTokenDTO(), RequestMocks.getProductRequest());
 
@@ -53,7 +52,7 @@ public class ProductServiceTest {
 
 	@Test
 	public void listAllShouldReturnSomeProducts(){
-		var list = Stream.of(DataMocks.getProduct(),DataMocks.getProduct(),DataMocks.getProduct()).collect(Collectors.toList());
+		var list = Stream.of(ProductMocks.getProduct(), ProductMocks.getProduct(), ProductMocks.getProduct()).collect(Collectors.toList());
 		when(repository.selectAllProducts(any())).thenReturn(list);
 		when(repository.countAllProducts()).thenReturn(list.size());
 		var response = service.listAllProducts(0);
@@ -77,7 +76,7 @@ public class ProductServiceTest {
 	@Test
 	public void listFromUserShouldReturnUserProducts(){
 		when(userRepository.existsById(any())).thenReturn(true);
-		var list = Stream.of(DataMocks.getProduct(),DataMocks.getProduct()).collect(Collectors.toList());
+		var list = Stream.of(ProductMocks.getProduct(), ProductMocks.getProduct()).collect(Collectors.toList());
 		when(repository.getProductsByOwnerId(any(), any())).thenReturn(list);
 		when(repository.countProductsByOwnerId(any())).thenReturn(list.size());
 
@@ -109,7 +108,7 @@ public class ProductServiceTest {
 
 	@Test
 	public void deleteProductShouldDeleteSuccessfully(){
-		var product = DataMocks.getProduct();
+		var product = ProductMocks.getProduct();
 		var user = UserMock.getUser();
 		user.setId(1L);
 		product.setOwner(user);
@@ -122,7 +121,7 @@ public class ProductServiceTest {
 
 	@Test
 	public void deleteProductShouldThrowForbiddenExceptionWhenUserDoesNotOwnProduct(){
-		var product = DataMocks.getProduct();
+		var product = ProductMocks.getProduct();
 		var user = UserMock.getUser();
 		user.setId(1L);
 		product.setOwner(user);
@@ -137,7 +136,7 @@ public class ProductServiceTest {
 
 	@Test
 	public void deleteProductShouldThrowNotFoundExceptionWhenProductIsNotFound(){
-		var product = DataMocks.getProduct();
+		var product = ProductMocks.getProduct();
 		var user = UserMock.getUser();
 		user.setId(1L);
 		product.setOwner(user);
@@ -152,11 +151,11 @@ public class ProductServiceTest {
 
 	@Test
 	public void updateProductShouldUpdateSuccessfully(){
-		var product = DataMocks.getProduct();
+		var product = ProductMocks.getProduct();
 		var user = UserMock.getUser();
 		user.setId(1L);
 		product.setOwner(user);
-		var request = RequestMocks.getProductRequest();
+		var request = RequestMocks.getUpdateProductRequestDTO();
 
 		when(repository.existsById(any())).thenReturn(true);
 		when(repository.findById(any())).thenReturn(Optional.of(product));
@@ -171,11 +170,11 @@ public class ProductServiceTest {
 
 	@Test
 	public void updateProductShouldThrowForbiddenExceptionWhenUserDoesNotOwnProduct(){
-		var product = DataMocks.getProduct();
+		var product = ProductMocks.getProduct();
 		var user = UserMock.getUser();
 		user.setId(1L);
 		product.setOwner(user);
-		var request = RequestMocks.getProductRequest();
+		var request = RequestMocks.getUpdateProductRequestDTO();
 
 		when(repository.existsById(any())).thenReturn(true);
 		when(repository.findById(any())).thenReturn(Optional.of(product));
@@ -187,11 +186,11 @@ public class ProductServiceTest {
 
 	@Test
 	public void updateProductShouldThrowNotFoundExceptionWhenProductIsNotFound(){
-		var product = DataMocks.getProduct();
+		var product = ProductMocks.getProduct();
 		var user = UserMock.getUser();
 		user.setId(1L);
 		product.setOwner(user);
-		var request = RequestMocks.getProductRequest();
+		var request = RequestMocks.getUpdateProductRequestDTO();
 
 		when(repository.existsById(any())).thenReturn(false);
 		when(repository.findById(any())).thenReturn(Optional.of(product));

@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class DataMocks {
+public class ProductMocks {
 
     public static Product getProduct(){
         return new Product(

@@ -35,11 +35,12 @@ Conheco um cara API, 75% implementado em spring
        - [x] POST /users/create
        - [x] GET /users/{id} (admin perm)
        - [x] DELETE /users/{id} (admin perm)
-    - [ ] P&S_Server
-       - [ ] PUT /service
-       - [ ] DELETE /service
-       - [ ] POST /service/register
-       - [ ] GET /service/me
+    - [x] P&S_Server
+       - [x] PUT /service/{id}
+       - [x] DELETE /service/{id}
+       - [x] POST /service/register
+       - [x] GET /service/me
+       - [x] GET /service/me/{page}
        - [x] PUT /product/{id}
        - [x] DELETE /product/{id}
        - [x] POST /product/register
