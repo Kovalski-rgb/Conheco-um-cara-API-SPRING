@@ -16,6 +16,7 @@ import br.pucpr.communityserver.rest.users.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -165,6 +166,117 @@ public class PostServiceTest {
             var result = service.getAllPostsFromUser(userDTO);
             assertNotNull(result);
         });
+    }
+
+    // deletePost
+    @Test
+    public void deletePostShouldDeletePostOfItsCreatorThatDoesNotHaveModeratorPrivileges(){
+        var mockUser = MockUsers.getUser();
+        var mockPost = MockPosts.getPost();
+        var userDTO = MockUsers.getUserTokenDTO();
+
+        when(communityRepository.existsById(any())).thenReturn(true);
+        when(communityRepository.getUserInCommunityById(any(), any())).thenReturn(mockUser);
+
+        when(repository.existsById(any())).thenReturn(true);
+        when(repository.findById(any())).thenReturn(Optional.of(mockPost));
+
+        when(communityRepository.getModeratorByCommunityAndUser(any(), any())).thenReturn(null);
+
+        assertDoesNotThrow(()-> service.deletePost(mockPost.getId(), mockPost.getCommunity().getId(), userDTO));
+        verify(repository, times(1)).deletePostById(any());
+    }
+
+    @Test
+    public void deletePostShouldDeletePostOfAnotherUserOnlyWhenTheRequesterHadModeratorPrivileges(){
+        var mockUser = MockUsers.getUser();
+        var mockPost = MockPosts.getPost();
+        var userDTO = MockUsers.getUserTokenDTO();
+        userDTO.setId(2L);
+
+        when(communityRepository.existsById(any())).thenReturn(true);
+        when(communityRepository.getUserInCommunityById(any(), any())).thenReturn(mockUser);
+
+        when(repository.existsById(any())).thenReturn(true);
+        when(repository.findById(any())).thenReturn(Optional.of(mockPost));
+
+        when(communityRepository.getModeratorByCommunityAndUser(any(), any())).thenReturn(mockUser);
+
+        assertDoesNotThrow(()-> service.deletePost(mockPost.getId(), mockPost.getCommunity().getId(), userDTO));
+        verify(repository, times(1)).deletePostById(any());
+    }
+
+    @Test
+    public void deletePostShouldThrowNotFoundExceptionWhenCommunityWasNotFound(){
+        var mockUser = MockUsers.getUser();
+        var mockPost = MockPosts.getPost();
+        var userDTO = MockUsers.getUserTokenDTO();
+
+        when(communityRepository.existsById(any())).thenReturn(false);
+        when(communityRepository.getUserInCommunityById(any(), any())).thenReturn(mockUser);
+
+        when(repository.existsById(any())).thenReturn(true);
+        when(repository.findById(any())).thenReturn(Optional.of(mockPost));
+
+        when(communityRepository.getModeratorByCommunityAndUser(any(), any())).thenReturn(mockUser);
+
+        assertThrows(NotFoundException.class, ()-> service.deletePost(mockPost.getId(), mockPost.getCommunity().getId(), userDTO));
+        verify(repository, times(0)).deletePostById(any());
+    }
+
+    @Test
+    public void deletePostShouldThrowForbiddenExceptionWhenRequestingUserIsNotInsideCommunity(){
+        var mockUser = MockUsers.getUser();
+        var mockPost = MockPosts.getPost();
+        var userDTO = MockUsers.getUserTokenDTO();
+
+        when(communityRepository.existsById(any())).thenReturn(true);
+        when(communityRepository.getUserInCommunityById(any(), any())).thenReturn(null);
+
+        when(repository.existsById(any())).thenReturn(true);
+        when(repository.findById(any())).thenReturn(Optional.of(mockPost));
+
+        when(communityRepository.getModeratorByCommunityAndUser(any(), any())).thenReturn(mockUser);
+
+        assertThrows(ForbiddenException.class, ()-> service.deletePost(mockPost.getId(), mockPost.getCommunity().getId(), userDTO));
+        verify(repository, times(0)).deletePostById(any());
+    }
+
+    @Test
+    public void deletePostShouldThrowNotFoundExceptionWhenThePostWasNotFound(){
+        var mockUser = MockUsers.getUser();
+        var mockPost = MockPosts.getPost();
+        var userDTO = MockUsers.getUserTokenDTO();
+
+        when(communityRepository.existsById(any())).thenReturn(true);
+        when(communityRepository.getUserInCommunityById(any(), any())).thenReturn(mockUser);
+
+        when(repository.existsById(any())).thenReturn(false);
+        when(repository.findById(any())).thenReturn(Optional.of(mockPost));
+
+        when(communityRepository.getModeratorByCommunityAndUser(any(), any())).thenReturn(mockUser);
+
+        assertThrows(NotFoundException.class, ()-> service.deletePost(mockPost.getId(), mockPost.getCommunity().getId(), userDTO));
+        verify(repository, times(0)).deletePostById(any());
+    }
+
+    @Test
+    public void deletePostShouldThrowForbiddenExceptionWhenUserDoesNotHaveAnyPrivilegesNeitherIsTheCreator(){
+        var mockUser = MockUsers.getUser();
+        var mockPost = MockPosts.getPost();
+        var userDTO = MockUsers.getUserTokenDTO();
+        userDTO.setId(2L);
+
+        when(communityRepository.existsById(any())).thenReturn(true);
+        when(communityRepository.getUserInCommunityById(any(), any())).thenReturn(mockUser);
+
+        when(repository.existsById(any())).thenReturn(true);
+        when(repository.findById(any())).thenReturn(Optional.of(mockPost));
+
+        when(communityRepository.getModeratorByCommunityAndUser(any(), any())).thenReturn(null);
+
+        assertThrows(ForbiddenException.class, ()-> service.deletePost(mockPost.getId(), mockPost.getCommunity().getId(), userDTO));
+        verify(repository, times(0)).deletePostById(any());
     }
 
 }

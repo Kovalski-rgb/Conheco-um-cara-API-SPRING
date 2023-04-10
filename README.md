@@ -60,7 +60,7 @@ Conheco um cara API, 75% implementado em spring
        - [x] GET /community/me
        - [x] GET /community/all
        - [ ] PUT /post/{postId}/community/{communityId}
-       - [ ] DELETE /post/{postId}/community/{communityId}
+       - [x] DELETE /post/{postId}/community/{communityId}
        - [x] POST /post/create
        - [x] GET /post/me
        - [ ] GET /post/community/{id}
