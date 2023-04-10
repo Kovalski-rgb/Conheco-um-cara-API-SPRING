@@ -338,6 +338,85 @@ public class CommunityServiceTest {
 		assertThrows(ForbiddenException.class,()->service.joinCommunity(userDto, request));
 	}
 
+	// leaveCommunity
+	@Test
+	public void leaveCommunityShouldLetUserLeaveCommunityAndNotDeleteItWhenItHasMoreThanOneUser(){
+		var userDto = MockUsers.getUserTokenDTO();
+		var userMock = MockUsers.getUser();
+		var otherUserMock = MockUsers.getUser();
+		otherUserMock.setId(2L);
+		var communityMock = MockCommunities.getCommunity();
+		var userList = Stream.of(userMock, otherUserMock).toList();
+
+
+		when(repository.existsById(any())).thenReturn(true);
+		when(repository.getUserInCommunityById(any(), any())).thenReturn(userMock);
+		when(repository.getCommunityById(any())).thenReturn(communityMock);
+		when(userRepository.findById(any())).thenReturn(Optional.of(userMock));
+		when(repository.getModeratorListFromCommunityById(any())).thenReturn(userList);
+		when(repository.getUserListFromCommunityById(any())).thenReturn(userList);
+
+		assertDoesNotThrow(()->service.leaveCommunity(userDto, 1L));
+		verify(repository, times(0)).deleteCommunityById(any());
+	}
+
+	@Test
+	public void leaveCommunityShouldLetUserLeaveCommunityAndDeleteItWhenUserWasTheLastUserInsideCommunity(){
+		var userDto = MockUsers.getUserTokenDTO();
+		var userMock = MockUsers.getUser();
+		var communityMock = MockCommunities.getCommunity();
+
+		when(repository.existsById(any())).thenReturn(true);
+		when(repository.getUserInCommunityById(any(), any())).thenReturn(userMock);
+		when(repository.getCommunityById(any())).thenReturn(communityMock);
+		when(userRepository.findById(any())).thenReturn(Optional.of(userMock));
+		when(repository.getModeratorListFromCommunityById(any())).thenReturn(new ArrayList<>());
+		when(repository.getUserListFromCommunityById(any())).thenReturn(new ArrayList<>());
+
+		assertDoesNotThrow(()->service.leaveCommunity(userDto, 1L));
+		verify(repository, times(1)).deleteCommunityById(any());
+	}
+
+	@Test
+	public void leaveCommunityShouldThrowNotFoundExceptionWhenCommunityDoesNotExist(){
+		var userDto = MockUsers.getUserTokenDTO();
+		var userMock = MockUsers.getUser();
+		var otherUserMock = MockUsers.getUser();
+		otherUserMock.setId(2L);
+		var communityMock = MockCommunities.getCommunity();
+		var userList = Stream.of(userMock, otherUserMock).toList();
+
+
+		when(repository.existsById(any())).thenReturn(false);
+		when(repository.getUserInCommunityById(any(), any())).thenReturn(userMock);
+		when(repository.getCommunityById(any())).thenReturn(communityMock);
+		when(userRepository.findById(any())).thenReturn(Optional.of(userMock));
+		when(repository.getModeratorListFromCommunityById(any())).thenReturn(userList);
+		when(repository.getUserListFromCommunityById(any())).thenReturn(userList);
+
+		assertThrows(NotFoundException.class, ()->service.leaveCommunity(userDto, 1L));
+	}
+
+	@Test
+	public void leaveCommunityShouldThrowNotFoundExceptionWhenUserIsNotInsideCommunity(){
+		var userDto = MockUsers.getUserTokenDTO();
+		var userMock = MockUsers.getUser();
+		var otherUserMock = MockUsers.getUser();
+		otherUserMock.setId(2L);
+		var communityMock = MockCommunities.getCommunity();
+		var userList = Stream.of(userMock, otherUserMock).toList();
+
+
+		when(repository.existsById(any())).thenReturn(true);
+		when(repository.getUserInCommunityById(any(), any())).thenReturn(null);
+		when(repository.getCommunityById(any())).thenReturn(communityMock);
+		when(userRepository.findById(any())).thenReturn(Optional.of(userMock));
+		when(repository.getModeratorListFromCommunityById(any())).thenReturn(userList);
+		when(repository.getUserListFromCommunityById(any())).thenReturn(userList);
+
+		assertThrows(NotFoundException.class, ()->service.leaveCommunity(userDto, 1L));
+	}
+
 	// kickFromCommunity
 	@Test
 	public void kickFromCommunityShouldKickAnotherUserFromCommunityWhenUserIsModeratorAndNotDeleteCommunityWhenSizeIsBiggerThanOne(){

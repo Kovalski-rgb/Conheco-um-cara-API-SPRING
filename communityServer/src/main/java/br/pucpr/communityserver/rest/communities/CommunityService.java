@@ -233,11 +233,11 @@ public class CommunityService {
 
     public String generateCode(int size){
         String baseChars = "abcefghijklmnopqrstuvwxzy0123456789";
-        var code = "";
+        StringBuilder code = new StringBuilder();
         Random random = new Random();
         for(int i = 0; i < size; i++){
-            code+= baseChars.charAt(random.nextInt(baseChars.length()));
+            code.append(baseChars.charAt(random.nextInt(baseChars.length())));
         }
-        return code;
+        return code.toString();
     }
 }
