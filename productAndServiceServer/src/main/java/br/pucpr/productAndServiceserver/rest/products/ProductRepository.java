@@ -12,7 +12,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     public List<Product> getProductsByOwnerId(Long ownerId, PageRequest pageable);
     public List<Product> selectAllProducts(PageRequest pageable);
-    public Integer countAllProducts();
+    public int countAllProducts();
     public int countProductsByOwnerId(Long ownerId);
 
 

@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+import br.pucpr.productAndServiceserver.lib.exception.NotFoundException;
 import br.pucpr.productAndServiceserver.rest.users.UserMock;
 import br.pucpr.productAndServiceserver.rest.users.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -66,6 +67,39 @@ public class ProductServiceTest {
 		when(repository.countAllProducts()).thenReturn(0);
 		var response = service.listAllProducts(0);
 
+		assertNotNull(response.getProducts());
+		assertNotNull(response.getLastPage());
+		assertNotNull(response.getPageNumber());
+	}
+
+	@Test
+	public void listFromUserShouldReturnUserProducts(){
+		when(userRepository.existsById(any())).thenReturn(true);
+		var list = Stream.of(DataMocks.getProduct(),DataMocks.getProduct()).collect(Collectors.toList());
+		when(repository.getProductsByOwnerId(any(), any())).thenReturn(list);
+		when(repository.countProductsByOwnerId(any())).thenReturn(list.size());
+
+		var response = service.listFromUser(1L, 0);
+		assertNotNull(response.getProducts());
+		assertNotNull(response.getLastPage());
+		assertNotNull(response.getPageNumber());
+	}
+
+	@Test
+	public void listFromUserShouldThrowNotFoundExceptionWhenUserIsNotInDatabase() {
+		when(userRepository.existsById(any())).thenReturn(false);
+		assertThrows(NotFoundException.class, () -> {
+			service.listFromUser(1L, 0);
+		});
+	}
+
+	@Test
+	public void listFromUserShouldNotActWeirdWhenThereAreNoProducts(){
+		when(userRepository.existsById(any())).thenReturn(true);
+		when(repository.getProductsByOwnerId(any(), any())).thenReturn(new ArrayList<>());
+		when(repository.countProductsByOwnerId(any())).thenReturn(0);
+
+		var response = service.listFromUser(1L, 0);
 		assertNotNull(response.getProducts());
 		assertNotNull(response.getLastPage());
 		assertNotNull(response.getPageNumber());
