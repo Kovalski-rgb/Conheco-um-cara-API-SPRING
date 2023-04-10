@@ -580,4 +580,45 @@ public class CommunityServiceTest {
 
 		assertThrows(ForbiddenException.class, ()->service.listAllModeratorsFromCommunity(1L, 1L));
 	}
+
+	// listMembersFromCommunity
+	@Test
+	public void listMembersFromCommunityShouldListMembersFromCommunityWhenUserBelongsToThatCommunity(){
+		var userMock = MockUsers.getUser();
+		var userList = Stream.of(userMock).toList();
+
+		when(repository.existsById(any())).thenReturn(true);
+		when(repository.getUserInCommunityById(any(), any())).thenReturn(userMock);
+		when(repository.getUserListFromCommunityById(any())).thenReturn(userList);
+
+		assertDoesNotThrow(() -> {
+			var result = service.listMembersFromCommunity(1L, 1L);
+			assertNotNull(result);
+			assertTrue(result.size()>0);
+		});
+	}
+
+	@Test
+	public void listMembersFromCommunityShouldThrowNotFoundExceptionWhenCommunityDoesNotExist(){
+		var userMock = MockUsers.getUser();
+		var userList = Stream.of(userMock).toList();
+
+		when(repository.existsById(any())).thenReturn(false);
+		when(repository.getUserInCommunityById(any(), any())).thenReturn(userMock);
+		when(repository.getUserListFromCommunityById(any())).thenReturn(userList);
+
+		assertThrows(NotFoundException.class, ()->service.listAllModeratorsFromCommunity(1L, 1L));
+	}
+
+	@Test
+	public void listMembersFromCommunityShouldThrowForbiddenExceptionWhenUserDoesNotBelongToTheCommunity(){
+		var userMock = MockUsers.getUser();
+		var userList = Stream.of(userMock).toList();
+
+		when(repository.existsById(any())).thenReturn(true);
+		when(repository.getUserInCommunityById(any(), any())).thenReturn(null);
+		when(repository.getUserListFromCommunityById(any())).thenReturn(userList);
+
+		assertThrows(ForbiddenException.class, ()->service.listAllModeratorsFromCommunity(1L, 1L));
+	}
 }

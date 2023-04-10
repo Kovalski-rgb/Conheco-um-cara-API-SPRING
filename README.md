@@ -56,7 +56,7 @@ Conheco um cara API, 75% implementado em spring
        - [x] POST /community/create
        - [x] GET /community/{communityId}
        - [x] GET /community/{communityId}/moderators/
-       - [ ] GET /community/{communityId}/members/
+       - [x] GET /community/{communityId}/members/
        - [x] GET /community/me
        - [x] GET /community/all
        - [ ] PUT /post/{postId}/community/{communityId}
