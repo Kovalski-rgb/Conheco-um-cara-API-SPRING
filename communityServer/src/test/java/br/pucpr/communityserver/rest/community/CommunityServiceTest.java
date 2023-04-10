@@ -5,6 +5,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import br.pucpr.communityserver.lib.exception.ForbiddenException;
+import br.pucpr.communityserver.lib.exception.NotFoundException;
 import br.pucpr.communityserver.rest.communities.Community;
 import br.pucpr.communityserver.rest.communities.CommunityRepository;
 import br.pucpr.communityserver.rest.communities.CommunityService;
@@ -15,6 +17,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -115,6 +118,101 @@ public class CommunityServiceTest {
 
 		assertNotNull(result);
 		assertEquals(0, result.size());
+	}
+
+	@Test
+	public void editCommunityShouldUpdateChosenCommunityWhenUserHasModeratorPermission(){
+		var update = MockRequests.getCommunityRequest();
+		var updatedCommunity = MockCommunities.getCommunity();
+		update.setName("update");
+		updatedCommunity.setName("update");
+
+		when(repository.existsById(any())).thenReturn(true);
+		when(repository.getModeratorByCommunityAndUser(any(), any())).thenReturn(MockUsers.getUser());
+		when(repository.findById(any())).thenReturn(Optional.of(MockCommunities.getCommunity()));
+		when(repository.getCommunitiesByCodeAndName(any(), any())).thenReturn(null);
+		when(repository.save(any())).thenReturn(updatedCommunity);
+
+		var normalUser = MockUsers.getUserTokenDTO();
+		var result = service.editCommunity(normalUser, 1L, update);
+
+		assertNotNull(result);
+		assertEquals(update.getName(), result.getName());
+	}
+
+	@Test
+	public void editCommunityShouldUpdateChosenCommunityWhenUserHasAdminPermissionWithoutModerator(){
+		var update = MockRequests.getCommunityRequest();
+		var updatedCommunity = MockCommunities.getCommunity();
+		update.setName("update");
+		updatedCommunity.setName("update");
+
+		when(repository.existsById(any())).thenReturn(true);
+		when(repository.getModeratorByCommunityAndUser(any(), any())).thenReturn(null);
+		when(repository.findById(any())).thenReturn(Optional.of(MockCommunities.getCommunity()));
+		when(repository.getCommunitiesByCodeAndName(any(), any())).thenReturn(null);
+		when(repository.save(any())).thenReturn(updatedCommunity);
+
+		var adminUser = MockUsers.getAdminUserTokenDTO();
+		var result = service.editCommunity(adminUser, 1L, update);
+
+		assertNotNull(result);
+		assertEquals(update.getName(), result.getName());
+	}
+
+	@Test
+	public void editCommunityShouldThrowNotFoundExceptionWhenTargetCommunityDoesNotExist(){
+		var update = MockRequests.getCommunityRequest();
+		var updatedCommunity = MockCommunities.getCommunity();
+		update.setName("update");
+		updatedCommunity.setName("update");
+
+		when(repository.existsById(any())).thenReturn(false);
+
+		var normalUser = MockUsers.getUserTokenDTO();
+
+		assertThrows(NotFoundException.class, () -> {
+			service.editCommunity(normalUser, 1L, update);
+		});
+	}
+
+	@Test
+	public void editCommunityShouldThrowForbiddenExceptionIsNotAdminNorModerator(){
+		var update = MockRequests.getCommunityRequest();
+		var updatedCommunity = MockCommunities.getCommunity();
+		update.setName("update");
+		updatedCommunity.setName("update");
+
+		when(repository.existsById(any())).thenReturn(true);
+		when(repository.getModeratorByCommunityAndUser(any(), any())).thenReturn(null);
+		when(repository.findById(any())).thenReturn(Optional.of(MockCommunities.getCommunity()));
+		when(repository.getCommunitiesByCodeAndName(any(), any())).thenReturn(null);
+		when(repository.save(any())).thenReturn(updatedCommunity);
+
+		var normalUser = MockUsers.getUserTokenDTO();
+
+		assertThrows(ForbiddenException.class, () -> {
+			service.editCommunity(normalUser, 1L, update);
+		});
+	}
+
+	@Test
+	public void editCommunityShouldThrowForbiddenExceptionWhenAnotherCommunityMatchesCodeNameCombo(){
+		var update = MockRequests.getCommunityRequest();
+		var updatedCommunity = MockCommunities.getCommunity();
+		update.setName("update");
+		updatedCommunity.setName("update");
+
+		when(repository.existsById(any())).thenReturn(true);
+		when(repository.getModeratorByCommunityAndUser(any(), any())).thenReturn(MockUsers.getUser());
+		when(repository.findById(any())).thenReturn(Optional.of(MockCommunities.getCommunity()));
+		when(repository.getCommunitiesByCodeAndName(any(), any())).thenReturn(updatedCommunity);
+
+		var normalUser = MockUsers.getUserTokenDTO();
+
+		assertThrows(ForbiddenException.class, () -> {
+			service.editCommunity(normalUser, 1L, update);
+		});
 	}
 
 }
