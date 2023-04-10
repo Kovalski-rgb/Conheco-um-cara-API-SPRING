@@ -150,4 +150,55 @@ public class ProductServiceTest {
 		});
 	}
 
+	@Test
+	public void updateProductShouldUpdateSuccessfully(){
+		var product = DataMocks.getProduct();
+		var user = UserMock.getUser();
+		user.setId(1L);
+		product.setOwner(user);
+		var request = RequestMocks.getProductRequest();
+
+		when(repository.existsById(any())).thenReturn(true);
+		when(repository.findById(any())).thenReturn(Optional.of(product));
+		when(repository.save(any())).thenReturn(product);
+
+		var result = service.updateProduct(1L, 1L, request);
+
+		assertEquals(result.getName(), request.getName());
+		assertEquals(result.getPrice(), request.getPrice());
+		assertEquals(result.getDescription(), request.getDescription());
+	}
+
+	@Test
+	public void updateProductShouldThrowForbiddenExceptionWhenUserDoesNotOwnProduct(){
+		var product = DataMocks.getProduct();
+		var user = UserMock.getUser();
+		user.setId(1L);
+		product.setOwner(user);
+		var request = RequestMocks.getProductRequest();
+
+		when(repository.existsById(any())).thenReturn(true);
+		when(repository.findById(any())).thenReturn(Optional.of(product));
+
+		assertThrows(ForbiddenException.class, ()->{
+			service.updateProduct(2L, 1L, request);
+		});
+	}
+
+	@Test
+	public void updateProductShouldThrowNotFoundExceptionWhenProductIsNotFound(){
+		var product = DataMocks.getProduct();
+		var user = UserMock.getUser();
+		user.setId(1L);
+		product.setOwner(user);
+		var request = RequestMocks.getProductRequest();
+
+		when(repository.existsById(any())).thenReturn(false);
+		when(repository.findById(any())).thenReturn(Optional.of(product));
+
+		assertThrows(NotFoundException.class, ()->{
+			service.updateProduct(1L, 1L, request);
+		});
+	}
+
 }
