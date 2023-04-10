@@ -82,7 +82,7 @@ public class CommunityResource {
     @SecurityRequirement(name = "JWT-token")
     @RolesAllowed({"ADMIN"})
     public ResponseEntity<CommunityResponse> getCommunityById(
-            @RequestParam @Valid Long communityId
+            @PathVariable @Valid Long communityId
     ){
         return ResponseEntity.ok(service.getCommunityById(communityId));
     }
@@ -149,8 +149,8 @@ public class CommunityResource {
     @RolesAllowed({"USER", "ADMIN"})
     public void kickUserFromCommunity(
             HttpServletRequest headers,
-            @RequestParam Long communityId,
-            @RequestParam Long userId
+            @PathVariable Long communityId,
+            @PathVariable Long userId
     ){
         String token = headers.getHeader("Authorization");
         service.kickFromCommunity(jwt.decode(token), userId, communityId);

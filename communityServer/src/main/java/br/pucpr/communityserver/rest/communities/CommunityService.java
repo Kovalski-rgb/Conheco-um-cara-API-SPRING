@@ -33,6 +33,7 @@ public class CommunityService {
         Community community = new Community(communityRequest);
 
         var allCodes = repository.getCodesFromAllCommunitiesByName(communityRequest.getName());
+        if(allCodes == null) throw new IllegalStateException("could not check for a valid community code");
 
         String code = generateCode(Community.CODE_LENGTH);
         long count = 0;
@@ -58,6 +59,7 @@ public class CommunityService {
         return new CommunityResponse(repository.save(community));
     }
 
+    // TODO try to add pagination later
     public List<MultipleCommunitiesResponse> listAllCommunities(){
         List<Community> communities = repository.findAll();
         return communities.stream().map(MultipleCommunitiesResponse::new).collect(Collectors.toList());

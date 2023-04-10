@@ -2,11 +2,13 @@ package br.pucpr.communityserver.rest.communities.responses;
 
 import br.pucpr.communityserver.rest.communities.Community;
 import jakarta.validation.constraints.NotEmpty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Data
+@Data @AllArgsConstructor @NoArgsConstructor
 public class MultipleCommunitiesResponse {
 
     private Long id;

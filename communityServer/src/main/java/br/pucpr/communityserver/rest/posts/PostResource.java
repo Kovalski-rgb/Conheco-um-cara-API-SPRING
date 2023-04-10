@@ -62,7 +62,7 @@ public class PostResource {
     @SecurityRequirement(name = "JWT-token")
     @RolesAllowed({"USER"})
     public ResponseEntity<List<PostResponse>> getAllPostsFromCommunity(
-            @Valid @RequestParam Long id,
+            @Valid @PathVariable Long id,
             HttpServletRequest headers
     ) {
         String token = headers.getHeader("Authorization");
@@ -78,7 +78,7 @@ public class PostResource {
     @SecurityRequirement(name = "JWT-token")
     @RolesAllowed({"USER"})
     public ResponseEntity<List<PostResponse>> getAllPostsFromCommunityFromUser(
-            @Valid @RequestParam Long id,
+            @Valid @PathVariable Long id,
             HttpServletRequest headers
     ) {
         String token = headers.getHeader("Authorization");
@@ -94,8 +94,8 @@ public class PostResource {
     @SecurityRequirement(name = "JWT-token")
     @RolesAllowed({"USER"})
     public ResponseEntity<HttpStatus> deletePost(
-            @Valid @RequestParam Long postId,
-            @Valid @RequestParam Long communityId,
+            @Valid @PathVariable Long postId,
+            @Valid @PathVariable Long communityId,
             HttpServletRequest headers
     ) {
         String token = headers.getHeader("Authorization");
@@ -108,8 +108,8 @@ public class PostResource {
     @SecurityRequirement(name = "JWT-token")
     @RolesAllowed({"USER"})
     public ResponseEntity<PostResponse> deletePost(
-            @Valid @RequestParam Long postId,
-            @Valid @RequestParam Long communityId,
+            @Valid @PathVariable Long postId,
+            @Valid @PathVariable Long communityId,
             @Valid @RequestBody EditPostRequest request,
             HttpServletRequest headers
     ) {

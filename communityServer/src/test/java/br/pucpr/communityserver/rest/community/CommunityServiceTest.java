@@ -5,58 +5,70 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import br.pucpr.communityserver.rest.communities.Community;
 import br.pucpr.communityserver.rest.communities.CommunityRepository;
 import br.pucpr.communityserver.rest.communities.CommunityService;
-import br.pucpr.communityserver.rest.communities.requests.CommunityJoinRequest;
-import br.pucpr.communityserver.rest.communities.responses.CommunityResponse;
-import br.pucpr.communityserver.rest.users.User;
+import br.pucpr.communityserver.rest.user.MockUsers;
 import br.pucpr.communityserver.rest.users.UserRepository;
-import br.pucpr.communityserver.rest.users.requests.UserTokenDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import br.pucpr.communityserver.lib.exception.BadRequestException;
+import java.util.HashSet;
 
 public class CommunityServiceTest {
 
-	private CommunityRepository communityRepository;
+	private CommunityRepository repository;
 	private CommunityService communityService;
+	private UserRepository userRepository;
 
 	@BeforeEach
 	public void setup() {
-		communityRepository = mock(CommunityRepository.class);
-		UserRepository userRepository = mock(UserRepository.class);
-		communityService = new CommunityService(communityRepository, userRepository);
+		repository = mock(CommunityRepository.class);
+		userRepository = mock(UserRepository.class);
+		communityService = new CommunityService(repository, userRepository);
 	}
 
 	@Test
-	public void should_create_community_successfully() {
-		var userDTO = UserDtoStub.getAdminUser();
-		var request = CommunityStub.getCommunityRequest1();
-		var community = new Community(request);
-		community.setId(1L);
-		community.setCreatedAt(LocalDateTime.now());
-		community.setCode(communityService.generateCode(8));
-		community.setModerators(new HashSet<User>());
-		community.setUsers(new HashSet<User>());
+	public void saveCommunityShouldCreateCommunitySuccessfullyWhenUserExists() {
+		var userDTO = MockUsers.getUserTokenDTO();
+		var request = MockRequests.getCommunityRequest();
+		var communityMock = MockCommunities.getCommunity();
 
-		when(communityRepository.save(any())).thenReturn(community);
+		when(repository.getCodesFromAllCommunitiesByName(any())).thenReturn(new HashSet<>());
+		when(repository.save(any())).thenReturn(communityMock);
+		when(userRepository.existsById(any())).thenReturn(true);
+		when(userRepository.save(any())).thenReturn(MockUsers.getUser());
 		var communityResponse = communityService.saveCommunity(userDTO, request);
 
-		assertNotNull(communityResponse);
+		assertNotNull(communityResponse.getId());
 		assertNotNull(communityResponse.getCode());
 	}
 
 	@Test
-	public void should_let_user_join_community() {
-		var userDTO = UserDtoStub.getAdminUser();
+	public void saveCommunityShouldCreateCommunitySuccessfullyWhenUserDoNotExistYet() {
+		var userDTO = MockUsers.getUserTokenDTO();
+		var request = MockRequests.getCommunityRequest();
+		var communityMock = MockCommunities.getCommunity();
+
+		when(repository.getCodesFromAllCommunitiesByName(any())).thenReturn(new HashSet<>());
+		when(repository.save(any())).thenReturn(communityMock);
+		when(userRepository.existsById(any())).thenReturn(false);
+		when(userRepository.save(any())).thenReturn(MockUsers.getUser());
+		var communityResponse = communityService.saveCommunity(userDTO, request);
+
+		assertNotNull(communityResponse.getId());
+		assertNotNull(communityResponse.getCode());
+	}
+
+	@Test
+	public void saveCommunityShouldThrowIllegalStateExceptionWhenCodeCheckingBreaks() {
+		var userDTO = MockUsers.getUserTokenDTO();
+		var request = MockRequests.getCommunityRequest();
+
+		when(repository.getCodesFromAllCommunitiesByName(any())).thenReturn(null);
+
+		assertThrows(IllegalStateException.class, () -> {
+			communityService.saveCommunity(userDTO, request);
+		});
 	}
 
 }
