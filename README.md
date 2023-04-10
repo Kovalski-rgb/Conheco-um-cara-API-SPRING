@@ -52,7 +52,7 @@ Conheco um cara API, 75% implementado em spring
        - [ ] POST /community/{communityId}/kick/{userId}
        - [ ] POST /community/moderators/toggle
        - [ ] POST /community/leave
-       - [ ] POST /community/join
+       - [x] POST /community/join
        - [x] POST /community/create
        - [ ] GET /community/{communityId}
        - [ ] GET /community/{communityId}/moderators/

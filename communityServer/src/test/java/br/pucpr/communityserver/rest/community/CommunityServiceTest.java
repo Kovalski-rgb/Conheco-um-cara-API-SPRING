@@ -34,6 +34,7 @@ public class CommunityServiceTest {
 		service = new CommunityService(repository, userRepository);
 	}
 
+	// saveCommunity
 	@Test
 	public void saveCommunityShouldCreateCommunitySuccessfullyWhenUserExists() {
 		var userDTO = MockUsers.getUserTokenDTO();
@@ -78,6 +79,7 @@ public class CommunityServiceTest {
 		});
 	}
 
+	// listAllCommunities
 	@Test
 	public void listAllCommunitiesShouldReturnAListOfCommunities(){
 		var list = Stream.of(MockCommunities.getCommunity()).collect(Collectors.toList());
@@ -98,6 +100,7 @@ public class CommunityServiceTest {
 		assertEquals(0, result.size());
 	}
 
+	// listAllCommunitiesFromUser
 	@Test
 	public void listAllCommunitiesFromUserShouldReturnAListOfCommunities(){
 		var list = Stream.of(MockCommunities.getCommunity()).collect(Collectors.toList());
@@ -120,6 +123,7 @@ public class CommunityServiceTest {
 		assertEquals(0, result.size());
 	}
 
+	// editCommunity
 	@Test
 	public void editCommunityShouldUpdateChosenCommunityWhenUserHasModeratorPermission(){
 		var update = MockRequests.getCommunityRequest();
@@ -215,6 +219,7 @@ public class CommunityServiceTest {
 		});
 	}
 
+	// deleteCommunity
 	@Test
 	public void deleteCommunityShouldNotThrowErrorsWhenCommunityExistsAndUserHasModeratorPrivileges(){
 		when(repository.existsById(any())).thenReturn(true);
@@ -222,7 +227,7 @@ public class CommunityServiceTest {
 
 		var mockUserDto = MockUsers.getUserTokenDTO();
 
-		service.deleteCommunity(mockUserDto, 1L);
+		assertDoesNotThrow(()->service.deleteCommunity(mockUserDto, 1L));
 	}
 
 
@@ -233,7 +238,7 @@ public class CommunityServiceTest {
 
 		var mockUserDto = MockUsers.getAdminUserTokenDTO();
 
-		service.deleteCommunity(mockUserDto, 1L);
+		assertDoesNotThrow(()->service.deleteCommunity(mockUserDto, 1L));
 	}
 
 	@Test
@@ -256,6 +261,94 @@ public class CommunityServiceTest {
 		assertThrows(ForbiddenException.class, () -> {
 			service.deleteCommunity(mockUserDto, 1L);
 		});
+	}
+
+	// joinCommunity
+	@Test
+	public void joinCommunityShouldLetUserJoinCommunityEvenWhenHeIsNotRegisteredLocally(){
+		var request = MockRequests.getCommunityJoinRequest();
+		var userDto = MockUsers.getUserTokenDTO();
+		var userMock = MockUsers.getUser();
+
+		var community = MockCommunities.getCommunity();
+		var savedCommunity = MockCommunities.getCommunity();
+		var userList = savedCommunity.getUsers();
+		userList.add(userMock);
+		savedCommunity.setUsers(userList);
+
+		when(repository.getCommunitiesByCodeAndName(any(), any())).thenReturn(community);
+		when(userRepository.existsById(any())).thenReturn(false);
+		when(userRepository.save(any())).thenReturn(userMock);
+		when(repository.getUserInCommunityById(any(), any())).thenReturn(null);
+		when(userRepository.findById(any())).thenReturn(Optional.of(userMock));
+		when(repository.save(any())).thenReturn(savedCommunity);
+
+		assertDoesNotThrow(()->service.joinCommunity(userDto, request));
+	}
+
+	@Test
+	public void joinCommunityShouldLetUserJoinCommunityEvenWhenHeIsRegisteredLocally(){
+		var request = MockRequests.getCommunityJoinRequest();
+		var userDto = MockUsers.getUserTokenDTO();
+		var userMock = MockUsers.getUser();
+
+		var community = MockCommunities.getCommunity();
+		var savedCommunity = MockCommunities.getCommunity();
+		var userList = savedCommunity.getUsers();
+		userList.add(userMock);
+		savedCommunity.setUsers(userList);
+
+		when(repository.getCommunitiesByCodeAndName(any(), any())).thenReturn(community);
+		when(userRepository.existsById(any())).thenReturn(true);
+		when(userRepository.save(any())).thenReturn(userMock);
+		when(repository.getUserInCommunityById(any(), any())).thenReturn(null);
+		when(userRepository.findById(any())).thenReturn(Optional.of(userMock));
+		when(repository.save(any())).thenReturn(savedCommunity);
+
+		assertDoesNotThrow(()->service.joinCommunity(userDto, request));
+	}
+
+	@Test
+	public void joinCommunityShouldThrowNotFoundExceptionWhenThereIsNotACommunityThatMatchesTheCriteria(){
+		var request = MockRequests.getCommunityJoinRequest();
+		var userDto = MockUsers.getUserTokenDTO();
+		var userMock = MockUsers.getUser();
+
+		var savedCommunity = MockCommunities.getCommunity();
+		var userList = savedCommunity.getUsers();
+		userList.add(userMock);
+		savedCommunity.setUsers(userList);
+
+		when(repository.getCommunitiesByCodeAndName(any(), any())).thenReturn(null);
+		when(userRepository.existsById(any())).thenReturn(true);
+		when(userRepository.save(any())).thenReturn(userMock);
+		when(repository.getUserInCommunityById(any(), any())).thenReturn(null);
+		when(userRepository.findById(any())).thenReturn(Optional.of(userMock));
+		when(repository.save(any())).thenReturn(savedCommunity);
+
+		assertThrows(NotFoundException.class,()->service.joinCommunity(userDto, request));
+	}
+
+	@Test
+	public void joinCommunityShouldForbiddenExceptionWhenUserIsAlreadyInsideTheCommunity(){
+		var request = MockRequests.getCommunityJoinRequest();
+		var userDto = MockUsers.getUserTokenDTO();
+		var userMock = MockUsers.getUser();
+
+		var community = MockCommunities.getCommunity();
+		var savedCommunity = MockCommunities.getCommunity();
+		var userList = savedCommunity.getUsers();
+		userList.add(userMock);
+		savedCommunity.setUsers(userList);
+
+		when(repository.getCommunitiesByCodeAndName(any(), any())).thenReturn(community);
+		when(userRepository.existsById(any())).thenReturn(false);
+		when(userRepository.save(any())).thenReturn(userMock);
+		when(repository.getUserInCommunityById(any(), any())).thenReturn(userMock);
+		when(userRepository.findById(any())).thenReturn(Optional.of(userMock));
+		when(repository.save(any())).thenReturn(savedCommunity);
+
+		assertThrows(ForbiddenException.class,()->service.joinCommunity(userDto, request));
 	}
 
 }
