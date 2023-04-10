@@ -48,7 +48,7 @@ Conheco um cara API, 75% implementado em spring
        - [x] GET /product/all/{page}
     - [ ] CommunityServer
        - [x] PUT /community/{id}
-       - [ ] DELETE /community/{id}
+       - [x] DELETE /community/{id}
        - [ ] POST /community/{communityId}/kick/{userId}
        - [ ] POST /community/moderators/toggle
        - [ ] POST /community/leave

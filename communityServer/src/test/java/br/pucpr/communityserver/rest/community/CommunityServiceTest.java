@@ -141,7 +141,7 @@ public class CommunityServiceTest {
 	}
 
 	@Test
-	public void editCommunityShouldUpdateChosenCommunityWhenUserHasAdminPermissionWithoutModerator(){
+	public void editCommunityShouldUpdateChosenCommunityWhenUserHasOnlyAdminPermission(){
 		var update = MockRequests.getCommunityRequest();
 		var updatedCommunity = MockCommunities.getCommunity();
 		update.setName("update");
@@ -212,6 +212,49 @@ public class CommunityServiceTest {
 
 		assertThrows(ForbiddenException.class, () -> {
 			service.editCommunity(normalUser, 1L, update);
+		});
+	}
+
+	@Test
+	public void deleteCommunityShouldNotThrowErrorsWhenCommunityExistsAndUserHasModeratorPrivileges(){
+		when(repository.existsById(any())).thenReturn(true);
+		when(repository.getModeratorByCommunityAndUser(any(), any())).thenReturn(MockUsers.getUser());
+
+		var mockUserDto = MockUsers.getUserTokenDTO();
+
+		service.deleteCommunity(mockUserDto, 1L);
+	}
+
+
+	@Test
+	public void deleteCommunityShouldNotThrowErrorsWhenCommunityExistsAndUserHasOnlyAdminPrivileges(){
+		when(repository.existsById(any())).thenReturn(true);
+		when(repository.getModeratorByCommunityAndUser(any(), any())).thenReturn(null);
+
+		var mockUserDto = MockUsers.getAdminUserTokenDTO();
+
+		service.deleteCommunity(mockUserDto, 1L);
+	}
+
+	@Test
+	public void deleteCommunityShouldThrowNotFoundExceptionWhenCommunityDoesNotExist(){
+		when(repository.existsById(any())).thenReturn(false);
+
+		var mockUserDto = MockUsers.getUserTokenDTO();
+		assertThrows(NotFoundException.class, () -> {
+			service.deleteCommunity(mockUserDto, 1L);
+		});
+	}
+
+	@Test
+	public void deleteCommunityShouldThrowForbiddenExceptionWhenUserDoesNotHaveAnyPrivilege(){
+		when(repository.existsById(any())).thenReturn(true);
+		when(repository.getModeratorByCommunityAndUser(any(), any())).thenReturn(null);
+
+		var mockUserDto = MockUsers.getUserTokenDTO();
+
+		assertThrows(ForbiddenException.class, () -> {
+			service.deleteCommunity(mockUserDto, 1L);
 		});
 	}
 
