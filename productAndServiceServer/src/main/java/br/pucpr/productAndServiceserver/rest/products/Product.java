@@ -14,10 +14,24 @@ import java.util.Set;
 
 
 @NamedQuery(
-        name="Product.getProductsByCreatorId",
+        name="Product.getProductsByOwnerId",
         query = "SELECT p from Product p" +
                 " JOIN p.owner o" +
-                " WHERE o.id = :creatorId"
+                " WHERE o.id = :ownerId"
+)
+@NamedQuery(
+        name="Product.countAllProducts",
+        query = "SELECT COUNT(p) FROM Product p"
+)
+@NamedQuery(
+        name="Product.countProductsByOwnerId",
+        query = "SELECT COUNT(p) FROM Product p" +
+                " JOIN p.owner o" +
+                " WHERE o.id = :ownerId"
+)
+@NamedQuery(
+        name="Product.selectAllProducts",
+        query = "SELECT p from Product p"
 )
 
 @Entity @Data

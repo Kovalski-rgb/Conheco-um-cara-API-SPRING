@@ -3,20 +3,24 @@ package br.pucpr.productAndServiceserver.rest.products;
 import br.pucpr.productAndServiceserver.lib.exception.ForbiddenException;
 import br.pucpr.productAndServiceserver.lib.exception.NotFoundException;
 import br.pucpr.productAndServiceserver.rest.products.request.ProductRequest;
+import br.pucpr.productAndServiceserver.rest.products.response.AdminPaginationResponse;
+import br.pucpr.productAndServiceserver.rest.products.response.ProductPaginationResponse;
 import br.pucpr.productAndServiceserver.rest.products.response.ProductResponse;
 import br.pucpr.productAndServiceserver.rest.users.User;
 import br.pucpr.productAndServiceserver.rest.users.UserRepository;
 import br.pucpr.productAndServiceserver.rest.users.requests.UserTokenDTO;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 public class ProductService {
 
-    private ProductRepository repository;
-    private UserRepository userRepository;
+    private final ProductRepository repository;
+    private final UserRepository userRepository;
+
+    private final Integer pageSize = 20;
 
     public ProductService(ProductRepository repository, UserRepository userRepository) {
         this.repository = repository;
@@ -36,9 +40,23 @@ public class ProductService {
         return repository.save(product);
     }
 
-    public List<ProductResponse> listFromUser(Long userId) {
-//        if(!userRepository.existsById(userId)) throw new NotFoundException("User not found");
-        return repository.getProductsByOwnerId(userId).stream().map(ProductResponse::new).toList();
+    public AdminPaginationResponse listAllProducts(Integer page){
+        var response = new AdminPaginationResponse();
+        response.setProducts(repository.selectAllProducts(PageRequest.of(page, pageSize)));
+        response.setPageNumber(page);
+        response.setLastPage(repository.countAllProducts()/pageSize);
+        return response;
+    }
+
+    public ProductPaginationResponse listFromUser(Long userId, Integer page) {
+        if(!userRepository.existsById(userId)) throw new NotFoundException("User not found");
+        var response = new ProductPaginationResponse();
+        response.setProducts(repository.getProductsByOwnerId(userId, PageRequest.of(page, pageSize))
+                .stream().map(ProductResponse::new).toList()
+        );
+        response.setPageNumber(page);
+        response.setLastPage(repository.countProductsByOwnerId(userId)/pageSize);
+        return response;
     }
 
     public ProductResponse updateProduct(Long userId, Long productId, ProductRequest request){
