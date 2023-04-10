@@ -43,7 +43,8 @@ Conheco um cara API, 75% implementado em spring
        - [ ] PUT /product
        - [ ] DELETE /product
        - [x] POST /product/register
-       - [ ] GET /product/me
+       - [ ] GET /product/me/{page}
+       - [x] GET /product/all/{page}
     - [ ] CommunityServer
        - [ ] PUT /community/{id}
        - [ ] DELETE /community/{id}

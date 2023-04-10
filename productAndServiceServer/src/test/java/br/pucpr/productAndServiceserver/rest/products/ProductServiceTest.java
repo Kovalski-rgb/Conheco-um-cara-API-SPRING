@@ -9,6 +9,11 @@ import br.pucpr.productAndServiceserver.rest.users.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 public class ProductServiceTest {
 
 	private ProductRepository repository;
@@ -41,6 +46,29 @@ public class ProductServiceTest {
 
 		assertNotNull(result.getOwner());
 		assertNotNull(result.getCreatedAt());
+	}
+
+	@Test
+	public void listAllShouldReturnSomeProducts(){
+		var list = Stream.of(DataMocks.getProduct(),DataMocks.getProduct(),DataMocks.getProduct()).collect(Collectors.toList());
+		when(repository.selectAllProducts(any())).thenReturn(list);
+		when(repository.countAllProducts()).thenReturn(list.size());
+		var response = service.listAllProducts(0);
+
+		assertNotNull(response.getProducts());
+		assertNotNull(response.getLastPage());
+		assertNotNull(response.getPageNumber());
+	}
+
+	@Test
+	public void listAllShouldNotActWeirdWhenThereAreNoProducts(){
+		when(repository.selectAllProducts(any())).thenReturn(new ArrayList<>());
+		when(repository.countAllProducts()).thenReturn(0);
+		var response = service.listAllProducts(0);
+
+		assertNotNull(response.getProducts());
+		assertNotNull(response.getLastPage());
+		assertNotNull(response.getPageNumber());
 	}
 
 }
