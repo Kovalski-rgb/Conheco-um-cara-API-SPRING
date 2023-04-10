@@ -216,9 +216,6 @@ public class CommunityService {
             community.getModerators().add(user);
         }
 
-        System.out.println(community.getModerators());
-        System.out.println(community.getUsers());
-
         if(community.getModerators().size() == 0){
             for(User u : community.getUsers()){
                 if(!u.getId().equals(request.getUserId())) {

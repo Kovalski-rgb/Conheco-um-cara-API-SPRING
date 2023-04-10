@@ -50,7 +50,7 @@ Conheco um cara API, 75% implementado em spring
        - [x] PUT /community/{id}
        - [x] DELETE /community/{id}
        - [x] POST /community/{communityId}/kick/{userId}
-       - [ ] POST /community/moderators/toggle
+       - [x] POST /community/moderators/toggle
        - [x] POST /community/leave
        - [x] POST /community/join
        - [x] POST /community/create

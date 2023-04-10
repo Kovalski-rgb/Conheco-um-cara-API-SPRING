@@ -621,4 +621,236 @@ public class CommunityServiceTest {
 
 		assertThrows(ForbiddenException.class, ()->service.listAllModeratorsFromCommunity(1L, 1L));
 	}
+
+	// toggleModerator
+	@Test
+	public void toggleModeratorShouldGrantModeratorPermissionsForTargetUser(){
+		var communityMock = MockCommunities.getCommunity();
+		var communityMockResponse = MockCommunities.getCommunity();
+		var modUserDTO = MockUsers.getUserTokenDTO();
+		var modUser = MockUsers.getUser();
+		var targetUser = MockUsers.getUser();
+		var request = MockRequests.getRequestToggleModerator();
+
+		modUserDTO.setId(modUser.getId());
+		targetUser.setId(123L);
+		request.setUserId(targetUser.getId());
+
+		communityMock.setModerators(Stream.of(modUser).collect(Collectors.toSet()));
+		communityMock.setUsers(Stream.of(modUser, targetUser).collect(Collectors.toSet()));
+
+		communityMockResponse.setModerators(Stream.of(modUser, targetUser).collect(Collectors.toSet()));
+		communityMockResponse.setUsers(Stream.of(modUser, targetUser).collect(Collectors.toSet()));
+
+
+		when(repository.existsById(any())).thenReturn(true);
+		when(repository.getUserInCommunityById(any(), eq(modUser.getId()))).thenReturn(modUser);
+		when(repository.getUserInCommunityById(any(), eq(targetUser.getId()))).thenReturn(targetUser);
+		when(repository.getModeratorByCommunityAndUser(any(), any())).thenReturn(modUser);
+		when(repository.getCommunityById(any())).thenReturn(communityMock);
+		when(userRepository.findById(any())).thenReturn(Optional.of(targetUser));
+		when(repository.save(any())).thenReturn(communityMockResponse);
+
+		assertDoesNotThrow(() -> service.toggleModerator(modUserDTO, request));
+		verify(userRepository, times(1)).findById(any());
+		verify(repository, times(1)).save(any());
+	}
+
+	@Test
+	public void toggleModeratorShouldStripModeratorPermissionsForTargetUser(){
+		var communityMock = MockCommunities.getCommunity();
+		var communityMockResponse = MockCommunities.getCommunity();
+		var modUserDTO = MockUsers.getUserTokenDTO();
+		var modUser = MockUsers.getUser();
+		var targetUser = MockUsers.getUser();
+		var request = MockRequests.getRequestToggleModerator();
+
+		modUserDTO.setId(modUser.getId());
+		targetUser.setId(123L);
+		request.setUserId(targetUser.getId());
+
+		communityMock.setModerators(Stream.of(modUser, targetUser).collect(Collectors.toSet()));
+		communityMock.setUsers(Stream.of(modUser, targetUser).collect(Collectors.toSet()));
+
+		communityMockResponse.setModerators(Stream.of(modUser, targetUser).collect(Collectors.toSet()));
+		communityMockResponse.setUsers(Stream.of(modUser, targetUser).collect(Collectors.toSet()));
+
+
+		when(repository.existsById(any())).thenReturn(true);
+		when(repository.getUserInCommunityById(any(), eq(modUser.getId()))).thenReturn(modUser);
+		when(repository.getUserInCommunityById(any(), eq(targetUser.getId()))).thenReturn(targetUser);
+		when(repository.getModeratorByCommunityAndUser(any(), any())).thenReturn(modUser);
+		when(repository.getCommunityById(any())).thenReturn(communityMock);
+		when(userRepository.findById(any())).thenReturn(Optional.of(targetUser));
+		when(repository.save(any())).thenReturn(communityMockResponse);
+
+		assertDoesNotThrow(() -> service.toggleModerator(modUserDTO, request));
+		verify(userRepository, times(0)).findById(any());
+		verify(repository, times(1)).save(any());
+	}
+
+	@Test
+	public void toggleModeratorShouldThrowNotFoundExceptionWhenCommunityDoesNotExist(){
+		var communityMock = MockCommunities.getCommunity();
+		var communityMockResponse = MockCommunities.getCommunity();
+		var modUserDTO = MockUsers.getUserTokenDTO();
+		var modUser = MockUsers.getUser();
+		var targetUser = MockUsers.getUser();
+		var request = MockRequests.getRequestToggleModerator();
+
+		modUserDTO.setId(modUser.getId());
+		targetUser.setId(123L);
+		request.setUserId(targetUser.getId());
+
+		communityMock.setModerators(Stream.of(modUser).collect(Collectors.toSet()));
+		communityMock.setUsers(Stream.of(modUser, targetUser).collect(Collectors.toSet()));
+
+		communityMockResponse.setModerators(Stream.of(modUser, targetUser).collect(Collectors.toSet()));
+		communityMockResponse.setUsers(Stream.of(modUser, targetUser).collect(Collectors.toSet()));
+
+
+		when(repository.existsById(any())).thenReturn(false);
+		when(repository.getUserInCommunityById(any(), eq(modUser.getId()))).thenReturn(modUser);
+		when(repository.getUserInCommunityById(any(), eq(targetUser.getId()))).thenReturn(targetUser);
+		when(repository.getModeratorByCommunityAndUser(any(), any())).thenReturn(modUser);
+		when(repository.getCommunityById(any())).thenReturn(communityMock);
+		when(userRepository.findById(any())).thenReturn(Optional.of(targetUser));
+		when(repository.save(any())).thenReturn(communityMockResponse);
+
+		assertThrows(NotFoundException.class, () -> service.toggleModerator(modUserDTO, request));
+		verify(userRepository, times(0)).findById(any());
+		verify(repository, times(0)).save(any());
+	}
+
+	@Test
+	public void toggleModeratorShouldThrowForbiddenExceptionWhenUserDoesNotBelongToThatCommunity(){
+		var communityMock = MockCommunities.getCommunity();
+		var communityMockResponse = MockCommunities.getCommunity();
+		var modUserDTO = MockUsers.getUserTokenDTO();
+		var modUser = MockUsers.getUser();
+		var targetUser = MockUsers.getUser();
+		var request = MockRequests.getRequestToggleModerator();
+
+		modUserDTO.setId(modUser.getId());
+		targetUser.setId(123L);
+		request.setUserId(targetUser.getId());
+
+		communityMock.setModerators(Stream.of(modUser).collect(Collectors.toSet()));
+		communityMock.setUsers(Stream.of(modUser, targetUser).collect(Collectors.toSet()));
+
+		communityMockResponse.setModerators(Stream.of(modUser, targetUser).collect(Collectors.toSet()));
+		communityMockResponse.setUsers(Stream.of(modUser, targetUser).collect(Collectors.toSet()));
+
+
+		when(repository.existsById(any())).thenReturn(true);
+		when(repository.getUserInCommunityById(any(), eq(modUser.getId()))).thenReturn(null);
+		when(repository.getUserInCommunityById(any(), eq(targetUser.getId()))).thenReturn(targetUser);
+		when(repository.getModeratorByCommunityAndUser(any(), any())).thenReturn(modUser);
+		when(repository.getCommunityById(any())).thenReturn(communityMock);
+		when(userRepository.findById(any())).thenReturn(Optional.of(targetUser));
+		when(repository.save(any())).thenReturn(communityMockResponse);
+
+		assertThrows(ForbiddenException.class, () -> service.toggleModerator(modUserDTO, request));
+		verify(userRepository, times(0)).findById(any());
+		verify(repository, times(0)).save(any());
+	}
+
+	@Test
+	public void toggleModeratorShouldThrowForbiddenExceptionWhenTargetUserDoesNotBelongToThatCommunity(){
+		var communityMock = MockCommunities.getCommunity();
+		var communityMockResponse = MockCommunities.getCommunity();
+		var modUserDTO = MockUsers.getUserTokenDTO();
+		var modUser = MockUsers.getUser();
+		var targetUser = MockUsers.getUser();
+		var request = MockRequests.getRequestToggleModerator();
+
+		modUserDTO.setId(modUser.getId());
+		targetUser.setId(123L);
+		request.setUserId(targetUser.getId());
+
+		communityMock.setModerators(Stream.of(modUser).collect(Collectors.toSet()));
+		communityMock.setUsers(Stream.of(modUser, targetUser).collect(Collectors.toSet()));
+
+		communityMockResponse.setModerators(Stream.of(modUser, targetUser).collect(Collectors.toSet()));
+		communityMockResponse.setUsers(Stream.of(modUser, targetUser).collect(Collectors.toSet()));
+
+
+		when(repository.existsById(any())).thenReturn(true);
+		when(repository.getUserInCommunityById(any(), eq(modUser.getId()))).thenReturn(modUser);
+		when(repository.getUserInCommunityById(any(), eq(targetUser.getId()))).thenReturn(null);
+		when(repository.getModeratorByCommunityAndUser(any(), any())).thenReturn(modUser);
+		when(repository.getCommunityById(any())).thenReturn(communityMock);
+		when(userRepository.findById(any())).thenReturn(Optional.of(targetUser));
+		when(repository.save(any())).thenReturn(communityMockResponse);
+
+		assertThrows(ForbiddenException.class, () -> service.toggleModerator(modUserDTO, request));
+		verify(userRepository, times(0)).findById(any());
+		verify(repository, times(0)).save(any());
+	}
+
+	@Test
+	public void toggleModeratorShouldThrowForbiddenExceptionWhenUserDoesNotHaveModeratorPrivilegesToToggleOtherModerator(){
+		var communityMock = MockCommunities.getCommunity();
+		var communityMockResponse = MockCommunities.getCommunity();
+		var modUserDTO = MockUsers.getUserTokenDTO();
+		var modUser = MockUsers.getUser();
+		var targetUser = MockUsers.getUser();
+		var request = MockRequests.getRequestToggleModerator();
+
+		modUserDTO.setId(modUser.getId());
+		targetUser.setId(123L);
+		request.setUserId(targetUser.getId());
+
+		communityMock.setModerators(Stream.of(targetUser).collect(Collectors.toSet()));
+		communityMock.setUsers(Stream.of(modUser, targetUser).collect(Collectors.toSet()));
+
+		communityMockResponse.setModerators(Stream.of(targetUser).collect(Collectors.toSet()));
+		communityMockResponse.setUsers(Stream.of(modUser, targetUser).collect(Collectors.toSet()));
+
+
+		when(repository.existsById(any())).thenReturn(true);
+		when(repository.getUserInCommunityById(any(), eq(modUser.getId()))).thenReturn(modUser);
+		when(repository.getUserInCommunityById(any(), eq(targetUser.getId()))).thenReturn(null);
+		when(repository.getModeratorByCommunityAndUser(any(), any())).thenReturn(modUser);
+		when(repository.getCommunityById(any())).thenReturn(communityMock);
+		when(userRepository.findById(any())).thenReturn(Optional.of(targetUser));
+		when(repository.save(any())).thenReturn(communityMockResponse);
+
+		assertThrows(ForbiddenException.class, () -> service.toggleModerator(modUserDTO, request));
+		verify(userRepository, times(0)).findById(any());
+		verify(repository, times(0)).save(any());
+	}
+
+	@Test
+	public void toggleModeratorShouldThrowForbiddenExceptionWhenUserIsTheLastModeratorInsideCommunity(){
+		var communityMock = MockCommunities.getCommunity();
+		var communityMockResponse = MockCommunities.getCommunity();
+		var modUserDTO = MockUsers.getUserTokenDTO();
+		var modUser = MockUsers.getUser();
+		var targetUser = MockUsers.getUser();
+		var request = MockRequests.getRequestToggleModerator();
+
+		modUserDTO.setId(modUser.getId());
+		targetUser.setId(modUser.getId());
+		request.setUserId(targetUser.getId());
+
+		communityMock.setModerators(Stream.of(modUser).collect(Collectors.toSet()));
+		communityMock.setUsers(Stream.of(modUser).collect(Collectors.toSet()));
+
+		when(repository.existsById(any())).thenReturn(true);
+		when(repository.getUserInCommunityById(any(), eq(modUser.getId()))).thenReturn(modUser);
+		when(repository.getUserInCommunityById(any(), eq(targetUser.getId()))).thenReturn(null);
+		when(repository.getModeratorByCommunityAndUser(any(), any())).thenReturn(modUser);
+		when(repository.getCommunityById(any())).thenReturn(communityMock);
+		when(userRepository.findById(any())).thenReturn(Optional.of(targetUser));
+		when(repository.save(any())).thenReturn(communityMockResponse);
+
+		assertThrows(ForbiddenException.class, () -> {
+			service.toggleModerator(modUserDTO, request);
+		});
+		verify(userRepository, times(0)).findById(any());
+		verify(repository, times(0)).save(any());
+	}
+
 }
+
