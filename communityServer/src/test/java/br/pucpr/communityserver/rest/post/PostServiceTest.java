@@ -4,6 +4,7 @@ import br.pucpr.communityserver.lib.exception.ForbiddenException;
 import br.pucpr.communityserver.lib.exception.NotFoundException;
 import br.pucpr.communityserver.rest.communities.CommunityRepository;
 import br.pucpr.communityserver.rest.community.MockCommunities;
+import br.pucpr.communityserver.rest.posts.Post;
 import br.pucpr.communityserver.rest.posts.PostRepository;
 import br.pucpr.communityserver.rest.posts.PostService;
 import br.pucpr.communityserver.rest.product.MockProducts;
@@ -15,7 +16,10 @@ import br.pucpr.communityserver.rest.users.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -110,7 +114,6 @@ public class PostServiceTest {
 
     @Test
     public void savePostShouldThrowForbiddenExceptionWhenUserIsNotInsideSpecifiedCommunity(){
-        var mockUser = MockUsers.getUser();
         var mockProduct = MockProducts.getProduct();
         var mockService = MockServices.getService();
         var mockCommunity = MockCommunities.getCommunity();
@@ -137,6 +140,31 @@ public class PostServiceTest {
 
         assertThrows(ForbiddenException.class, () -> service.savePost(userDTO, request));
         verify(repository, times(0)).save(any());
+    }
+
+    //    getAllPostsFromUser
+    @Test
+    public void getAllPostsFromUserShouldReturnAllPostsFromUser(){
+        var userDTO = MockUsers.getUserTokenDTO();
+        var postList = Stream.of(MockPosts.getPost(), MockPosts.getPost(), MockPosts.getPost()).collect(Collectors.toList());
+        when(repository.getAllPostsFromUserById(any())).thenReturn(postList);
+
+        assertDoesNotThrow(()->{
+            var result = service.getAllPostsFromUser(userDTO);
+            assertNotNull(result);
+        });
+    }
+
+    @Test
+    public void getAllPostsFromUserShouldReturnAllPostsFromUserEvenWhenThereAreNoPostsYet(){
+        var userDTO = MockUsers.getUserTokenDTO();
+        var postList = new ArrayList<Post>();
+        when(repository.getAllPostsFromUserById(any())).thenReturn(postList);
+
+        assertDoesNotThrow(()->{
+            var result = service.getAllPostsFromUser(userDTO);
+            assertNotNull(result);
+        });
     }
 
 }
