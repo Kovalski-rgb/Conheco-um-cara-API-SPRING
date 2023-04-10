@@ -71,7 +71,7 @@ public class CommunityService {
     }
 
     public CommunityResponse editCommunity(UserTokenDTO user, Long targetCommunityId, CommunityRequest request){
-        if(!repository.existsById(targetCommunityId)) { throw new NotFoundException("Target community not found"); };
+        if(!repository.existsById(targetCommunityId)) { throw new NotFoundException("Target community not found"); }
         if(repository.getModeratorByCommunityAndUser(targetCommunityId, user.getId()) == null &&
                 !user.getRoles().contains("ADMIN"))
             throw new ForbiddenException("User does not have permission to edit this community");
@@ -89,7 +89,7 @@ public class CommunityService {
     }
 
     public void deleteCommunity(UserTokenDTO user, Long communityId){
-        if(!repository.existsById(communityId)) { throw new NotFoundException("Community not found"); };
+        if(!repository.existsById(communityId)) { throw new NotFoundException("Community not found"); }
         if(repository.getModeratorByCommunityAndUser(communityId, user.getId()) != null ||
                 user.getRoles().contains("ADMIN")){
             repository.deleteCommunityById(communityId);
