@@ -514,4 +514,29 @@ public class CommunityServiceTest {
 
 		assertThrows(ForbiddenException.class,()->service.kickFromCommunity(userDto, 1L, 1L));
 	}
+
+	// getCommunityById
+	@Test
+	public void getCommunityByIdShouldReturnACommunity(){
+		var community = MockCommunities.getCommunity();
+
+		when(repository.existsById(any())).thenReturn(true);
+		when(repository.findById(any())).thenReturn(Optional.of(community));
+
+		var result = service.getCommunityById(1L);
+
+		assertNotNull(result);
+	}
+
+	@Test
+	public void getCommunityByIdShouldReturnNullWhenCommunityDoesNotExist(){
+		var community = MockCommunities.getCommunity();
+
+		when(repository.existsById(any())).thenReturn(false);
+		when(repository.findById(any())).thenReturn(Optional.of(community));
+
+		var result = service.getCommunityById(1L);
+
+		assertNull(result);
+	}
 }
