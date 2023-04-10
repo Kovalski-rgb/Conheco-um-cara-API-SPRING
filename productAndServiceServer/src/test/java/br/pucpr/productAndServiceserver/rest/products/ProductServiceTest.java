@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+import br.pucpr.productAndServiceserver.lib.exception.ForbiddenException;
 import br.pucpr.productAndServiceserver.lib.exception.NotFoundException;
 import br.pucpr.productAndServiceserver.rest.users.UserMock;
 import br.pucpr.productAndServiceserver.rest.users.UserRepository;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -103,6 +105,49 @@ public class ProductServiceTest {
 		assertNotNull(response.getProducts());
 		assertNotNull(response.getLastPage());
 		assertNotNull(response.getPageNumber());
+	}
+
+	@Test
+	public void deleteProductShouldDeleteSuccessfully(){
+		var product = DataMocks.getProduct();
+		var user = UserMock.getUser();
+		user.setId(1L);
+		product.setOwner(user);
+
+		when(repository.existsById(any())).thenReturn(true);
+		when(repository.findById(any())).thenReturn(Optional.of(product));
+
+		service.deleteProduct(1L, 1L);
+	}
+
+	@Test
+	public void deleteProductShouldThrowForbiddenExceptionWhenUserDoesNotOwnProduct(){
+		var product = DataMocks.getProduct();
+		var user = UserMock.getUser();
+		user.setId(1L);
+		product.setOwner(user);
+
+		when(repository.existsById(any())).thenReturn(true);
+		when(repository.findById(any())).thenReturn(Optional.of(product));
+
+		assertThrows(ForbiddenException.class, ()->{
+			service.deleteProduct(2L, 1L);
+		});
+	}
+
+	@Test
+	public void deleteProductShouldThrowNotFoundExceptionWhenProductIsNotFound(){
+		var product = DataMocks.getProduct();
+		var user = UserMock.getUser();
+		user.setId(1L);
+		product.setOwner(user);
+
+		when(repository.existsById(any())).thenReturn(false);
+		when(repository.findById(any())).thenReturn(Optional.of(product));
+
+		assertThrows(NotFoundException.class, ()->{
+			service.deleteProduct(1L, 1L);
+		});
 	}
 
 }

@@ -40,8 +40,8 @@ Conheco um cara API, 75% implementado em spring
        - [ ] DELETE /service
        - [ ] POST /service/register
        - [ ] GET /service/me
-       - [ ] PUT /product
-       - [ ] DELETE /product
+       - [ ] PUT /product/{id}
+       - [x] DELETE /product/{id}
        - [x] POST /product/register
        - [x] GET /product/me/{page}
        - [x] GET /product/all/{page}

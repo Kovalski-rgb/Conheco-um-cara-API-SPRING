@@ -75,13 +75,13 @@ public class ProductResource {
         return ResponseEntity.ok(service.listFromUser(userDTO.getId(), page));
     }
 
-    @PutMapping
+    @PutMapping("/{id}")
     @Transactional
     @SecurityRequirement(name="JWT-token")
     @RolesAllowed({"USER"})
     public ResponseEntity<ProductResponse> update(
             HttpServletRequest headers,
-            @Valid @RequestParam Long id,
+            @Valid @PathVariable Long id,
             @Valid @RequestBody ProductRequest request
     ){
         var userDTO = jwt.decode(headers.getHeader("Authorization"));
@@ -90,13 +90,13 @@ public class ProductResource {
                 ResponseEntity.ok(result);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     @Transactional
     @SecurityRequirement(name="JWT-token")
     @RolesAllowed({"USER", "ADMIN"})
     public void delete(
             HttpServletRequest headers,
-            @Valid @RequestParam Long id
+            @Valid @PathVariable Long id
     ){
         var userDTO = jwt.decode(headers.getHeader("Authorization"));
         service.deleteProduct(userDTO.getId(), id);

@@ -62,7 +62,7 @@ public class ProductService {
     public ProductResponse updateProduct(Long userId, Long productId, ProductRequest request){
         if(!repository.existsById(productId)) throw new NotFoundException("Product not found");
         var product = repository.findById(productId).get();
-        if(product.getOwner().getId().intValue() != userId.intValue()) throw new ForbiddenException("This product is not from the current logged user");
+        if(!product.getOwner().getId().equals(userId)) throw new ForbiddenException("This product is not from the current logged user");
         product.update(request);
         return new ProductResponse(repository.save(product));
     }
@@ -70,9 +70,8 @@ public class ProductService {
     public void deleteProduct(Long userId, Long productId){
         if(!repository.existsById(productId)) throw new NotFoundException("Product not found");
         var product = repository.findById(productId).get();
-        if(product.getOwner().getId().intValue() != userId.intValue()) throw new ForbiddenException("This product is not from the current logged user");
+        if(!product.getOwner().getId().equals(userId)) throw new ForbiddenException("This product is not from the current logged user");
         repository.deleteById(product.getId());
-
     }
 
 }
