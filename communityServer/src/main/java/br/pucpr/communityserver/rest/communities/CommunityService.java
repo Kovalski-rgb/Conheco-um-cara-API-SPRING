@@ -138,8 +138,8 @@ public class CommunityService {
         var community = repository.getCommunityById(communityId);
         var user = userRepository.findById(tokenDTO.getId()).get();
 
-        community.getModerators().removeIf(m -> m.getId().intValue() == user.getId().intValue());
-        community.getUsers().removeIf(u -> u.getId().intValue() == user.getId().intValue());
+        community.getModerators().removeIf(m -> m.getId().equals(user.getId()));
+        community.getUsers().removeIf(u -> u.getId().equals(user.getId()));
 
         if(repository.getModeratorListFromCommunityById(communityId).size() == 0){
             if(community.getUsers().size() > 0) {

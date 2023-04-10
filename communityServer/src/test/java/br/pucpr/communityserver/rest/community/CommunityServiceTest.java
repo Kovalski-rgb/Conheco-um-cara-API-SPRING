@@ -1,10 +1,5 @@
 package br.pucpr.communityserver.rest.community;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import br.pucpr.communityserver.lib.exception.ForbiddenException;
 import br.pucpr.communityserver.lib.exception.NotFoundException;
 import br.pucpr.communityserver.rest.communities.Community;
@@ -20,6 +15,10 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 public class CommunityServiceTest {
 
@@ -74,9 +73,7 @@ public class CommunityServiceTest {
 
 		when(repository.getCodesFromAllCommunitiesByName(any())).thenReturn(null);
 
-		assertThrows(IllegalStateException.class, () -> {
-			service.saveCommunity(userDTO, request);
-		});
+		assertThrows(IllegalStateException.class, () -> service.saveCommunity(userDTO, request));
 	}
 
 	// listAllCommunities
@@ -175,9 +172,7 @@ public class CommunityServiceTest {
 
 		var normalUser = MockUsers.getUserTokenDTO();
 
-		assertThrows(NotFoundException.class, () -> {
-			service.editCommunity(normalUser, 1L, update);
-		});
+		assertThrows(NotFoundException.class, () -> service.editCommunity(normalUser, 1L, update));
 	}
 
 	@Test
@@ -195,9 +190,7 @@ public class CommunityServiceTest {
 
 		var normalUser = MockUsers.getUserTokenDTO();
 
-		assertThrows(ForbiddenException.class, () -> {
-			service.editCommunity(normalUser, 1L, update);
-		});
+		assertThrows(ForbiddenException.class, () -> service.editCommunity(normalUser, 1L, update));
 	}
 
 	@Test
@@ -214,9 +207,7 @@ public class CommunityServiceTest {
 
 		var normalUser = MockUsers.getUserTokenDTO();
 
-		assertThrows(ForbiddenException.class, () -> {
-			service.editCommunity(normalUser, 1L, update);
-		});
+		assertThrows(ForbiddenException.class, () -> service.editCommunity(normalUser, 1L, update));
 	}
 
 	// deleteCommunity
@@ -246,9 +237,7 @@ public class CommunityServiceTest {
 		when(repository.existsById(any())).thenReturn(false);
 
 		var mockUserDto = MockUsers.getUserTokenDTO();
-		assertThrows(NotFoundException.class, () -> {
-			service.deleteCommunity(mockUserDto, 1L);
-		});
+		assertThrows(NotFoundException.class, () -> service.deleteCommunity(mockUserDto, 1L));
 	}
 
 	@Test
@@ -258,9 +247,7 @@ public class CommunityServiceTest {
 
 		var mockUserDto = MockUsers.getUserTokenDTO();
 
-		assertThrows(ForbiddenException.class, () -> {
-			service.deleteCommunity(mockUserDto, 1L);
-		});
+		assertThrows(ForbiddenException.class, () -> service.deleteCommunity(mockUserDto, 1L));
 	}
 
 	// joinCommunity
@@ -351,4 +338,101 @@ public class CommunityServiceTest {
 		assertThrows(ForbiddenException.class,()->service.joinCommunity(userDto, request));
 	}
 
+	// kickFromCommunity
+	@Test
+	public void kickFromCommunityShouldKickAnotherUserFromCommunityWhenUserIsModeratorAndNotDeleteCommunityWhenSizeIsBiggerThanOne(){
+		var userDto = MockUsers.getUserTokenDTO();
+		var userMock = MockUsers.getUser();
+		var communityMock = MockCommunities.getCommunity();
+		var userList = Stream.of(userMock).toList();
+
+		when(repository.existsById(any())).thenReturn(true);
+		when(repository.getUserInCommunityById(any(), any())).thenReturn(userMock);
+		when(repository.getModeratorByCommunityAndUser(any(), any())).thenReturn(userMock);
+		when(repository.getCommunityById(any())).thenReturn(communityMock);
+		when(userRepository.findById(any())).thenReturn(Optional.of(userMock));
+		when(repository.getModeratorListFromCommunityById(any())).thenReturn(userList);
+		when(repository.save(any())).thenReturn(communityMock);
+		when(repository.getUserListFromCommunityById(any())).thenReturn(userList);
+
+		assertDoesNotThrow(()->service.kickFromCommunity(userDto, 1L, 1L));
+		verify(repository, times(0)).deleteCommunityById(any());
+	}
+
+	@Test
+	public void kickFromCommunityShouldKickAnotherUserFromCommunityWhenUserIsAdminAndNotDeleteCommunityWhenSizeIsBiggerThanOne(){
+		var userDto = MockUsers.getAdminUserTokenDTO();
+		var userMock = MockUsers.getUser();
+		var communityMock = MockCommunities.getCommunity();
+		var userList = Stream.of(userMock).toList();
+
+		when(repository.existsById(any())).thenReturn(true);
+		when(repository.getUserInCommunityById(any(), any())).thenReturn(userMock);
+		when(repository.getModeratorByCommunityAndUser(any(), any())).thenReturn(null);
+		when(repository.getCommunityById(any())).thenReturn(communityMock);
+		when(userRepository.findById(any())).thenReturn(Optional.of(userMock));
+		when(repository.getModeratorListFromCommunityById(any())).thenReturn(userList);
+		when(repository.save(any())).thenReturn(communityMock);
+		when(repository.getUserListFromCommunityById(any())).thenReturn(userList);
+
+		assertDoesNotThrow(()->service.kickFromCommunity(userDto, 1L, 1L));
+		verify(repository, times(0)).deleteCommunityById(any());
+	}
+
+	@Test
+	public void kickFromCommunityShouldThrowNotFoundExceptionWhenCommunityIsNotFound(){
+		var userDto = MockUsers.getUserTokenDTO();
+		var userMock = MockUsers.getUser();
+		var communityMock = MockCommunities.getCommunity();
+		var userList = Stream.of(userMock).toList();
+
+		when(repository.existsById(any())).thenReturn(false);
+		when(repository.getUserInCommunityById(any(), any())).thenReturn(userMock);
+		when(repository.getModeratorByCommunityAndUser(any(), any())).thenReturn(userMock);
+		when(repository.getCommunityById(any())).thenReturn(communityMock);
+		when(userRepository.findById(any())).thenReturn(Optional.of(userMock));
+		when(repository.getModeratorListFromCommunityById(any())).thenReturn(userList);
+		when(repository.save(any())).thenReturn(communityMock);
+		when(repository.getUserListFromCommunityById(any())).thenReturn(userList);
+
+		assertThrows(NotFoundException.class,()->service.kickFromCommunity(userDto, 1L, 1L));
+	}
+
+	@Test
+	public void kickFromCommunityShouldThrowForbiddenExceptionWhenTargetDoesNotBelongToCommunity(){
+		var userDto = MockUsers.getUserTokenDTO();
+		var userMock = MockUsers.getUser();
+		var communityMock = MockCommunities.getCommunity();
+		var userList = Stream.of(userMock).toList();
+
+		when(repository.existsById(any())).thenReturn(true);
+		when(repository.getUserInCommunityById(any(), any())).thenReturn(null);
+		when(repository.getModeratorByCommunityAndUser(any(), any())).thenReturn(userMock);
+		when(repository.getCommunityById(any())).thenReturn(communityMock);
+		when(userRepository.findById(any())).thenReturn(Optional.of(userMock));
+		when(repository.getModeratorListFromCommunityById(any())).thenReturn(userList);
+		when(repository.save(any())).thenReturn(communityMock);
+		when(repository.getUserListFromCommunityById(any())).thenReturn(userList);
+
+		assertThrows(ForbiddenException.class,()->service.kickFromCommunity(userDto, 1L, 1L));
+	}
+
+	@Test
+	public void kickFromCommunityShouldThrowForbiddenExceptionWhenUserDoesNotHaveAnyPrivileges(){
+		var userDto = MockUsers.getUserTokenDTO();
+		var userMock = MockUsers.getUser();
+		var communityMock = MockCommunities.getCommunity();
+		var userList = Stream.of(userMock).toList();
+
+		when(repository.existsById(any())).thenReturn(true);
+		when(repository.getUserInCommunityById(any(), any())).thenReturn(userMock);
+		when(repository.getModeratorByCommunityAndUser(any(), any())).thenReturn(null);
+		when(repository.getCommunityById(any())).thenReturn(communityMock);
+		when(userRepository.findById(any())).thenReturn(Optional.of(userMock));
+		when(repository.getModeratorListFromCommunityById(any())).thenReturn(userList);
+		when(repository.save(any())).thenReturn(communityMock);
+		when(repository.getUserListFromCommunityById(any())).thenReturn(userList);
+
+		assertThrows(ForbiddenException.class,()->service.kickFromCommunity(userDto, 1L, 1L));
+	}
 }
