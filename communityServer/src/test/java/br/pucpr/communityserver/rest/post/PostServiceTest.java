@@ -360,4 +360,216 @@ public class PostServiceTest {
 
         assertThrows(ForbiddenException.class, ()-> service.getAllPostsFromCommunity(1L, userDTO));
     }
+
+    // editPost
+    @Test
+    public void editPostShouldEditExistingPostOfPostCreatorWithBothProductAndServiceRegistered() {
+        var mockProduct = MockProducts.getProduct();
+        var mockService = MockServices.getService();
+        var mockPost = MockPosts.getPost();
+        var mockuser = MockUsers.getUser();
+        var mockUserDTO = MockUsers.getUserTokenDTO();
+
+        var request = MockRequests.getEditPostRequest();
+
+        when(communityRepository.existsById(any())).thenReturn(true);
+        when(communityRepository.getUserInCommunityById(any(), any())).thenReturn(mockuser);
+        when(repository.existsById(any())).thenReturn(true);
+        when(repository.findById(any())).thenReturn(Optional.of(mockPost));
+        when(communityRepository.getModeratorByCommunityAndUser(any(), any())).thenReturn(null);
+
+        when(productRepository.existsById(any())).thenReturn(true);
+        when(productRepository.save(any())).thenReturn(mockProduct);
+        when(productRepository.findById(any())).thenReturn(Optional.of(mockProduct));
+
+        when(serviceRepository.existsById(any())).thenReturn(true);
+        when(serviceRepository.save(any())).thenReturn(mockService);
+        when(serviceRepository.findById(any())).thenReturn(Optional.of(mockService));
+
+        assertDoesNotThrow(()->{
+            var result = service.editPost(request, 1L, 1L, mockUserDTO);
+            assertNotNull(result);
+            verify(repository, times(1)).save(any());
+        });
+    }
+
+    @Test
+    public void editPostShouldEditExistingPostOfPostCreatorEvenWithBothProductAndServiceNotYetRegistered() {
+        var mockProduct = MockProducts.getProduct();
+        var mockService = MockServices.getService();
+        var mockPost = MockPosts.getPost();
+        var mockuser = MockUsers.getUser();
+        var mockUserDTO = MockUsers.getUserTokenDTO();
+
+        var request = MockRequests.getEditPostRequest();
+
+        when(communityRepository.existsById(any())).thenReturn(true);
+        when(communityRepository.getUserInCommunityById(any(), any())).thenReturn(mockuser);
+        when(repository.existsById(any())).thenReturn(true);
+        when(repository.findById(any())).thenReturn(Optional.of(mockPost));
+        when(communityRepository.getModeratorByCommunityAndUser(any(), any())).thenReturn(null);
+
+        when(productRepository.existsById(any())).thenReturn(false);
+        when(productRepository.save(any())).thenReturn(mockProduct);
+        when(productRepository.findById(any())).thenReturn(Optional.of(mockProduct));
+
+        when(serviceRepository.existsById(any())).thenReturn(false);
+        when(serviceRepository.save(any())).thenReturn(mockService);
+        when(serviceRepository.findById(any())).thenReturn(Optional.of(mockService));
+
+        assertDoesNotThrow(()->{
+            var result = service.editPost(request, 1L, 1L, mockUserDTO);
+            assertNotNull(result);
+            verify(repository, times(1)).save(any());
+        });
+    }
+
+    @Test
+    public void editPostShouldThrowNotFoundExceptionWhenTheCommunityDoesNotExist() {
+        var mockProduct = MockProducts.getProduct();
+        var mockService = MockServices.getService();
+        var mockPost = MockPosts.getPost();
+        var mockuser = MockUsers.getUser();
+        var mockUserDTO = MockUsers.getUserTokenDTO();
+
+        var request = MockRequests.getEditPostRequest();
+
+        when(communityRepository.existsById(any())).thenReturn(false);
+        when(communityRepository.getUserInCommunityById(any(), any())).thenReturn(mockuser);
+        when(repository.existsById(any())).thenReturn(true);
+        when(repository.findById(any())).thenReturn(Optional.of(mockPost));
+        when(communityRepository.getModeratorByCommunityAndUser(any(), any())).thenReturn(null);
+
+        when(productRepository.existsById(any())).thenReturn(false);
+        when(productRepository.save(any())).thenReturn(mockProduct);
+        when(productRepository.findById(any())).thenReturn(Optional.of(mockProduct));
+
+        when(serviceRepository.existsById(any())).thenReturn(false);
+        when(serviceRepository.save(any())).thenReturn(mockService);
+        when(serviceRepository.findById(any())).thenReturn(Optional.of(mockService));
+
+        assertThrows(NotFoundException.class, ()->
+                service.editPost(request, 1L, 1L, mockUserDTO));
+    }
+
+    @Test
+    public void editPostShouldThrowForbiddenExceptionWhenUserIsNotInsideCommunity() {
+        var mockProduct = MockProducts.getProduct();
+        var mockService = MockServices.getService();
+        var mockPost = MockPosts.getPost();
+        var mockUserDTO = MockUsers.getUserTokenDTO();
+
+        var request = MockRequests.getEditPostRequest();
+
+        when(communityRepository.existsById(any())).thenReturn(true);
+        when(communityRepository.getUserInCommunityById(any(), any())).thenReturn(null);
+        when(repository.existsById(any())).thenReturn(true);
+        when(repository.findById(any())).thenReturn(Optional.of(mockPost));
+        when(communityRepository.getModeratorByCommunityAndUser(any(), any())).thenReturn(null);
+
+        when(productRepository.existsById(any())).thenReturn(false);
+        when(productRepository.save(any())).thenReturn(mockProduct);
+        when(productRepository.findById(any())).thenReturn(Optional.of(mockProduct));
+
+        when(serviceRepository.existsById(any())).thenReturn(false);
+        when(serviceRepository.save(any())).thenReturn(mockService);
+        when(serviceRepository.findById(any())).thenReturn(Optional.of(mockService));
+
+
+        assertThrows(ForbiddenException.class, ()->
+                service.editPost(request, 1L, 1L, mockUserDTO));
+    }
+
+    @Test
+    public void editPostShouldThrowNotFoundExceptionWhenPostIsNotFound() {
+        var mockProduct = MockProducts.getProduct();
+        var mockService = MockServices.getService();
+        var mockPost = MockPosts.getPost();
+        var mockuser = MockUsers.getUser();
+        var mockUserDTO = MockUsers.getUserTokenDTO();
+
+        var request = MockRequests.getEditPostRequest();
+
+        when(communityRepository.existsById(any())).thenReturn(true);
+        when(communityRepository.getUserInCommunityById(any(), any())).thenReturn(mockuser);
+        when(repository.existsById(any())).thenReturn(false);
+        when(repository.findById(any())).thenReturn(Optional.of(mockPost));
+        when(communityRepository.getModeratorByCommunityAndUser(any(), any())).thenReturn(null);
+
+        when(productRepository.existsById(any())).thenReturn(false);
+        when(productRepository.save(any())).thenReturn(mockProduct);
+        when(productRepository.findById(any())).thenReturn(Optional.of(mockProduct));
+
+        when(serviceRepository.existsById(any())).thenReturn(false);
+        when(serviceRepository.save(any())).thenReturn(mockService);
+        when(serviceRepository.findById(any())).thenReturn(Optional.of(mockService));
+
+        assertThrows(NotFoundException.class, ()->
+                service.editPost(request, 1L, 1L, mockUserDTO));
+    }
+
+    @Test
+    public void editPostShouldThrowForbiddenExceptionWhenUserDoesNotHavePermissionToUpdatePost() {
+        var mockProduct = MockProducts.getProduct();
+        var mockService = MockServices.getService();
+        var mockPost = MockPosts.getPost();
+        var mockuser = MockUsers.getUser();
+        var anotherMockUser = MockUsers.getUser();
+        var mockUserDTO = MockUsers.getUserTokenDTO();
+
+        anotherMockUser.setId(2L);
+        mockPost.setCreator(anotherMockUser);
+        var request = MockRequests.getEditPostRequest();
+
+        when(communityRepository.existsById(any())).thenReturn(true);
+        when(communityRepository.getUserInCommunityById(any(), any())).thenReturn(mockuser);
+        when(repository.existsById(any())).thenReturn(true);
+        when(repository.findById(any())).thenReturn(Optional.of(mockPost));
+        when(communityRepository.getModeratorByCommunityAndUser(any(), any())).thenReturn(null);
+
+        when(productRepository.existsById(any())).thenReturn(false);
+        when(productRepository.save(any())).thenReturn(mockProduct);
+        when(productRepository.findById(any())).thenReturn(Optional.of(mockProduct));
+
+        when(serviceRepository.existsById(any())).thenReturn(false);
+        when(serviceRepository.save(any())).thenReturn(mockService);
+        when(serviceRepository.findById(any())).thenReturn(Optional.of(mockService));
+
+        assertThrows(ForbiddenException.class, ()->
+                service.editPost(request, 1L, 1L, mockUserDTO));
+    }
+
+    @Test
+    public void editPostShouldAllowAModeratorToEditAPostThatIsNotHisOwn() {
+        var mockProduct = MockProducts.getProduct();
+        var mockService = MockServices.getService();
+        var mockPost = MockPosts.getPost();
+        var mockuser = MockUsers.getUser();
+        var anotherMockUser = MockUsers.getUser();
+        var mockUserDTO = MockUsers.getUserTokenDTO();
+
+        anotherMockUser.setId(2L);
+        mockPost.setCreator(anotherMockUser);
+        var request = MockRequests.getEditPostRequest();
+
+        when(communityRepository.existsById(any())).thenReturn(true);
+        when(communityRepository.getUserInCommunityById(any(), any())).thenReturn(mockuser);
+        when(repository.existsById(any())).thenReturn(true);
+        when(repository.findById(any())).thenReturn(Optional.of(mockPost));
+        when(communityRepository.getModeratorByCommunityAndUser(any(), any())).thenReturn(mockuser);
+
+        when(productRepository.existsById(any())).thenReturn(false);
+        when(productRepository.save(any())).thenReturn(mockProduct);
+        when(productRepository.findById(any())).thenReturn(Optional.of(mockProduct));
+
+        when(serviceRepository.existsById(any())).thenReturn(false);
+        when(serviceRepository.save(any())).thenReturn(mockService);
+        when(serviceRepository.findById(any())).thenReturn(Optional.of(mockService));
+
+        assertDoesNotThrow(()->{
+            var result = service.editPost(request, 1L, 1L, mockUserDTO);
+            assertNotNull(result);
+            verify(repository, times(1)).save(any());
+        });
+    }
 }

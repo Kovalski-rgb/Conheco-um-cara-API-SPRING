@@ -26,7 +26,7 @@ Conheco um cara API, 75% implementado em spring
        - [x] Admins should only have power do delete/edit communities, not interfere inside them (deleting posts, changing mods, etc)
        - [x] Admins and moderators should be able to kick users inside communities
        - [ ] When deleting a community, delete all its posts too
- - [ ] Unitary tests
+ - [x] Unitary tests
     - [x] AuthServer
        - [x] GET /users/me
        - [x] PUT /users/me
@@ -46,7 +46,7 @@ Conheco um cara API, 75% implementado em spring
        - [x] POST /product/register
        - [x] GET /product/me/{page}
        - [x] GET /product/all/{page}
-    - [ ] CommunityServer
+    - [x] CommunityServer
        - [x] PUT /community/{id}
        - [x] DELETE /community/{id}
        - [x] POST /community/{communityId}/kick/{userId}
@@ -59,7 +59,7 @@ Conheco um cara API, 75% implementado em spring
        - [x] GET /community/{communityId}/members/
        - [x] GET /community/me
        - [x] GET /community/all
-       - [ ] PUT /post/{postId}/community/{communityId}
+       - [x] PUT /post/{postId}/community/{communityId}
        - [x] DELETE /post/{postId}/community/{communityId}
        - [x] POST /post/create
        - [x] GET /post/me
