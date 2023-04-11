@@ -24,9 +24,9 @@ public class ProductRequest {
     @NotNull
     @Schema(example = "12.34")
     private Double price;
-
-    @NotNull
-    @Schema(example = "Headphones")
-    private Set<String> productType;
+//
+//    @NotNull
+//    @Schema(example = "Headphones")
+//    private Set<String> productType;
 
 }

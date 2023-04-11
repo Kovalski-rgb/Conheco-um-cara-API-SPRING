@@ -12,8 +12,7 @@ public class RequestMocks {
         return new ServiceRequest(
                 "serviceName",
                 "serviceDescription",
-                12.50,
-                Stream.of("serviceType").collect(Collectors.toSet())
+                12.50
         );
     }
 
@@ -21,8 +20,7 @@ public class RequestMocks {
         return new UpdateServiceRequestDTO(
                 "newServiceName",
                 "newServiceDescription",
-                15.20,
-                Stream.of("newServiceType").collect(Collectors.toSet())
+                15.20
         );
     }
 

@@ -16,7 +16,6 @@ public class ResposeMocks {
                 "serviceName",
                 "serviceDescription",
                 12.50,
-                Stream.of("serviceType").collect(Collectors.toSet()),
                 LocalDateTime.MIN
         );
     }

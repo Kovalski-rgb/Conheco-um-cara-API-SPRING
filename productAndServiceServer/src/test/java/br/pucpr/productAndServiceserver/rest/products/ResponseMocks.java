@@ -16,7 +16,6 @@ public class ResponseMocks {
                 "productName",
                 "productDescription",
                 12.50,
-                Stream.of("productType").collect(Collectors.toSet()),
                 LocalDateTime.MIN
         );
     }

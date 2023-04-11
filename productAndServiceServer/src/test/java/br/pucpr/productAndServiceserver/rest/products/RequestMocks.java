@@ -13,8 +13,7 @@ public class RequestMocks {
         return new ProductRequest(
                 "productName",
                 "productDescription",
-                12.50,
-                Stream.of("productType").collect(Collectors.toSet())
+                12.50
         );
     }
 
@@ -22,8 +21,7 @@ public class RequestMocks {
         return new UpdateProductRequestDTO(
                 "newProductName",
                 "newProductDescription",
-                15.20,
-                Stream.of("newProductType").collect(Collectors.toSet())
+                15.20
         );
     }
 

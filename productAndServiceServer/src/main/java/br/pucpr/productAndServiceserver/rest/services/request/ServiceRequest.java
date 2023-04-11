@@ -22,8 +22,8 @@ public class ServiceRequest {
     @NotNull
     @Schema(example = "123.45")
     private Double price;
-    @NotNull
-    @Schema(example = "Cleaning")
-    private Set<String> serviceType;
+//    @NotNull
+//    @Schema(example = "Cleaning")
+//    private Set<String> serviceType;
 
 }

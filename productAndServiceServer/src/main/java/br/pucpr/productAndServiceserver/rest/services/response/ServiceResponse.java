@@ -26,8 +26,8 @@ public class ServiceResponse {
     @Schema(example = "123.45")
     private Double price;
 
-    @Schema(example = "Cleaning")
-    private Set<String> serviceType;
+//    @Schema(example = "Cleaning")
+//    private Set<String> serviceType;
 
     @Schema(example = "2023-04-09 15:53:23.000")
     private LocalDateTime createdAt;
@@ -37,7 +37,7 @@ public class ServiceResponse {
         this.name = service.getName();
         this.description = service.getDescription();
         this.price = service.getPrice();
-        this.serviceType = service.getServiceType();
+//        this.serviceType = service.getServiceType();
         this.createdAt = service.getCreatedAt();
     }
 }

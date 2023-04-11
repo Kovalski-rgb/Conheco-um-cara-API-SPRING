@@ -15,7 +15,6 @@ public class ServiceMocks {
                 "mockDescription",
                 UserMock.getUser(),
                 12.50,
-                Stream.of("Mock").collect(Collectors.toSet()),
                 LocalDateTime.MIN
         );
     }

@@ -17,7 +17,7 @@ public class UpdateProductRequestDTO {
     private String description;
     @Schema(example = "23.45")
     private Double price;
-    @Schema(example = "Electronics")
-    private Set<String> productType;
+//    @Schema(example = "Electronics")
+//    private Set<String> productType;
 
 }

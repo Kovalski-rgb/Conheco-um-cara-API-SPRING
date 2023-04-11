@@ -15,15 +15,15 @@ npm start --prefix _backendForFrontend/ &
 BFF_SERVER_PID=$!
 mvn -f "communityServer/pom.xml" spring-boot:run &
 COMMUNITY_SERVER_PID=$!
-# mvn -f "authServer/pom.xml" spring-boot:run &
-# AUTH_SERVER_PID=$!
-# mvn -f "productAndServiceServer/pom.xml" spring-boot:run &
-# PnD_SERVER_PID=$!
+mvn -f "authServer/pom.xml" spring-boot:run &
+AUTH_SERVER_PID=$!
+mvn -f "productAndServiceServer/pom.xml" spring-boot:run &
+PnD_SERVER_PID=$!
 echo -e "${red}!!! - Press enter or CTRL + C to stop all servers${clear}"
 read
 kill $BFF_SERVER_PID
 kill $COMMUNITY_SERVER_PID
-# kill $AUTH_SERVER_PID
-# kill $PnD_SERVER_PID
+kill $AUTH_SERVER_PID
+kill $PnD_SERVER_PID
 clear
 exit

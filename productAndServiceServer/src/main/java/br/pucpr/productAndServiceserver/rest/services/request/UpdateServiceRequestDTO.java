@@ -16,7 +16,7 @@ public class UpdateServiceRequestDTO {
     private String description;
     @Schema(example = "234.56")
     private Double price;
-    @Schema(example = "HouseKeeping")
-    private Set<String> serviceType;
+//    @Schema(example = "HouseKeeping")
+//    private Set<String> serviceType;
 
 }

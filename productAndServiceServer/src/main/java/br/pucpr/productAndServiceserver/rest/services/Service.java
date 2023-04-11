@@ -61,13 +61,13 @@ public class Service {
     private Double price;
 
 
-    @Schema(example = "Cleaning")
-    @NotEmpty
-    @ElementCollection
-    @CollectionTable
-            (name = "ServiceType", joinColumns = @JoinColumn(name = "id"))
-    @Column(name = "serviceType")
-    private Set<String> serviceType;
+//    @Schema(example = "Cleaning")
+//    @NotEmpty
+//    @ElementCollection
+//    @CollectionTable
+//            (name = "ServiceType", joinColumns = @JoinColumn(name = "id"))
+//    @Column(name = "serviceType")
+//    private Set<String> serviceType;
 
     @Schema(example = "2023-04-09 15:53:23.000")
     private LocalDateTime createdAt;
@@ -75,7 +75,7 @@ public class Service {
     public Service fromRequest(ServiceRequest request){
         this.name = request.getName();
         this.description = request.getDescription();
-        this.serviceType = request.getServiceType();
+//        this.serviceType = request.getServiceType();
         this.price = request.getPrice();
         return this;
     }
@@ -84,7 +84,7 @@ public class Service {
         if(service.getName() != null && !service.getName().isEmpty()) this.name = service.getName();
         if(service.getDescription() != null) this.description = service.getDescription();
         if(service.getPrice() != null  && !service.getPrice().isNaN())this.price = service.getPrice();
-        if(service.getServiceType() != null) this.serviceType = service.getServiceType();
+//        if(service.getServiceType() != null) this.serviceType = service.getServiceType();
     }
 
 }

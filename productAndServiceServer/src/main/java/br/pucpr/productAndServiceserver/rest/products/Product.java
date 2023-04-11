@@ -60,13 +60,13 @@ public class Product {
     @NotNull
     private Double price;
 
-    @Schema(example = "Headphones")
-    @NotEmpty
-    @ElementCollection
-    @CollectionTable
-            (name = "ProductType", joinColumns = @JoinColumn(name = "id"))
-    @Column(name = "productType")
-    private Set<String> productType;
+//    @Schema(example = "Headphones")
+//    @NotEmpty
+//    @ElementCollection
+//    @CollectionTable
+//            (name = "ProductType", joinColumns = @JoinColumn(name = "id"))
+//    @Column(name = "productType")
+//    private Set<String> productType;
 
     @Schema(example = "2023-04-09 15:53:23.000")
     private LocalDateTime createdAt;
@@ -74,7 +74,7 @@ public class Product {
     public Product fromRequest(ProductRequest request){
         this.name = request.getName();
         this.description = request.getDescription();
-        this.productType = request.getProductType();
+//        this.productType = request.getProductType();
         this.price = request.getPrice();
         return this;
     }
@@ -83,7 +83,7 @@ public class Product {
         if(product.getName() != null && !product.getName().isEmpty()) this.name = product.getName();
         if(product.getDescription() != null) this.description = product.getDescription();
         if(product.getPrice() != null  && !product.getPrice().isNaN())this.price = product.getPrice();
-        if(product.getProductType() != null) this.productType = product.getProductType();
+//        if(product.getProductType() != null) this.productType = product.getProductType();
     }
 
 }

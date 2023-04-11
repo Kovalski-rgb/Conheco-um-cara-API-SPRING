@@ -30,8 +30,8 @@ public class ProductResponse {
     @Schema(example = "12.34")
     private Double price;
 
-    @Schema(example = "Headphones")
-    private Set<String> productType;
+//    @Schema(example = "Headphones")
+//    private Set<String> productType;
 
     @Schema(example = "2023-04-09 15:53:23.000")
     private LocalDateTime createdAt;
@@ -41,7 +41,7 @@ public class ProductResponse {
         this.name = product.getName();
         this.description = product.getDescription();
         this.price = product.getPrice();
-        this.productType = product.getProductType();
+//        this.productType = product.getProductType();
         this.createdAt = product.getCreatedAt();
     }
 }
