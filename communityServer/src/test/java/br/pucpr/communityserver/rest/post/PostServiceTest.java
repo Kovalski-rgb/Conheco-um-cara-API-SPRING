@@ -7,6 +7,7 @@ import br.pucpr.communityserver.rest.community.MockCommunities;
 import br.pucpr.communityserver.rest.posts.Post;
 import br.pucpr.communityserver.rest.posts.PostRepository;
 import br.pucpr.communityserver.rest.posts.PostService;
+import br.pucpr.communityserver.rest.posts.response.PostResponse;
 import br.pucpr.communityserver.rest.product.MockProducts;
 import br.pucpr.communityserver.rest.products.ProductRepository;
 import br.pucpr.communityserver.rest.service.MockServices;
@@ -279,4 +280,84 @@ public class PostServiceTest {
         verify(repository, times(0)).deletePostById(any());
     }
 
+    // getAllPostsFromCommunityFromUser
+    @Test
+    public void getAllPostsFromCommunityFromUserShouldGetAllPostsFromRegisteredUser(){
+        var mockUser = MockUsers.getUser();
+        var postList = Stream.of(MockPosts.getPost()).toList();
+        var userDTO = MockUsers.getUserTokenDTO();
+
+        when(communityRepository.existsById(any())).thenReturn(true);
+        when(communityRepository.getUserInCommunityById(any(), any())).thenReturn(mockUser);
+        when(repository.getAllPostsFromUserByCommunityById(any(), any())).thenReturn(postList);
+
+        assertDoesNotThrow(()->{
+            var result = service.getAllPostsFromCommunityFromUser(1L, userDTO);
+            assertNotNull(result);
+        });
+    }
+    @Test
+    public void getAllPostsFromCommunityFromUserShouldThrowNotFoundExceptionWhenCommunityIsNotFound(){
+        var mockUser = MockUsers.getUser();
+        var postList = Stream.of(MockPosts.getPost()).toList();
+        var userDTO = MockUsers.getUserTokenDTO();
+
+        when(communityRepository.existsById(any())).thenReturn(false);
+        when(communityRepository.getUserInCommunityById(any(), any())).thenReturn(mockUser);
+        when(repository.getAllPostsFromUserByCommunityById(any(), any())).thenReturn(postList);
+
+        assertThrows(NotFoundException.class, ()-> service.getAllPostsFromCommunityFromUser(1L, userDTO));
+    }
+    @Test
+    public void getAllPostsFromCommunityFromUserShouldThrowForbiddenExceptionWhenUserDoesNotBelongToCommunity(){
+        var postList = Stream.of(MockPosts.getPost()).toList();
+        var userDTO = MockUsers.getUserTokenDTO();
+
+        when(communityRepository.existsById(any())).thenReturn(true);
+        when(communityRepository.getUserInCommunityById(any(), any())).thenReturn(null);
+        when(repository.getAllPostsFromUserByCommunityById(any(), any())).thenReturn(postList);
+
+        assertThrows(ForbiddenException.class, ()-> service.getAllPostsFromCommunityFromUser(1L, userDTO));
+    }
+
+    // getAllPostsFromCommunity
+    @Test
+    public void getAllPostsFromCommunityShouldGetAllPostsFromRegisteredUser(){
+        var mockUser = MockUsers.getUser();
+        var postList = Stream.of(MockPosts.getPost()).toList();
+        var userDTO = MockUsers.getUserTokenDTO();
+
+        when(communityRepository.existsById(any())).thenReturn(true);
+        when(communityRepository.getUserInCommunityById(any(), any())).thenReturn(mockUser);
+        when(repository.getAllPostsFromCommunityById(any())).thenReturn(postList);
+
+        assertDoesNotThrow(()->{
+            var result = service.getAllPostsFromCommunity(1L, userDTO);
+            assertNotNull(result);
+        });
+    }
+
+    @Test
+    public void getAllPostsFromCommunityShouldThrowNotFoundExceptionWhenCommunityIsNotFound(){
+        var mockUser = MockUsers.getUser();
+        var postList = Stream.of(MockPosts.getPost()).toList();
+        var userDTO = MockUsers.getUserTokenDTO();
+
+        when(communityRepository.existsById(any())).thenReturn(false);
+        when(communityRepository.getUserInCommunityById(any(), any())).thenReturn(mockUser);
+        when(repository.getAllPostsFromUserByCommunityById(any(), any())).thenReturn(postList);
+
+        assertThrows(NotFoundException.class, ()-> service.getAllPostsFromCommunity(1L, userDTO));
+    }
+    @Test
+    public void getAllPostsFromCommunityShouldThrowForbiddenExceptionWhenUserDoesNotBelongToCommunity(){
+        var postList = Stream.of(MockPosts.getPost()).toList();
+        var userDTO = MockUsers.getUserTokenDTO();
+
+        when(communityRepository.existsById(any())).thenReturn(true);
+        when(communityRepository.getUserInCommunityById(any(), any())).thenReturn(null);
+        when(repository.getAllPostsFromUserByCommunityById(any(), any())).thenReturn(postList);
+
+        assertThrows(ForbiddenException.class, ()-> service.getAllPostsFromCommunity(1L, userDTO));
+    }
 }

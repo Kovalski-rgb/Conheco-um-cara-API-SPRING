@@ -63,8 +63,8 @@ Conheco um cara API, 75% implementado em spring
        - [x] DELETE /post/{postId}/community/{communityId}
        - [x] POST /post/create
        - [x] GET /post/me
-       - [ ] GET /post/community/{id}
-       - [ ] GET /post/community/{id}/me
+       - [x] GET /post/community/{id}
+       - [x] GET /post/community/{id}/me
  - [ ] Documentation
     - [ ] AuthServer routes
     - [ ] P&S_Server routes

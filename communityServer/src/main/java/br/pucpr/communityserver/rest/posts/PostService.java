@@ -96,7 +96,7 @@ public class PostService {
     public PostResponse editPost(EditPostRequest request, Long postId, Long communityId, UserTokenDTO userTokenDTO){
         if(!communityRepository.existsById(communityId)) throw new NotFoundException("Community not found");
         if(communityRepository.getUserInCommunityById(communityId, userTokenDTO.getId()) == null)
-            throw new ForbiddenException("User must be inside specified community to delete a post");
+            throw new ForbiddenException("User must be inside specified community to update a post");
         if(!repository.existsById(postId)) throw new NotFoundException("Post not found");
         if(!repository.findById(postId).get().getCreator().getId().equals(userTokenDTO.getId())) {
             if (communityRepository.getModeratorByCommunityAndUser(communityId, userTokenDTO.getId()) == null)
