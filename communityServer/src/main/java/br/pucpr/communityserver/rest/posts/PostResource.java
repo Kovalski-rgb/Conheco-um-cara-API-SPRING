@@ -4,6 +4,13 @@ import br.pucpr.communityserver.lib.security.JWT;
 import br.pucpr.communityserver.rest.posts.requests.EditPostRequest;
 import br.pucpr.communityserver.rest.posts.requests.PostRequest;
 import br.pucpr.communityserver.rest.posts.response.PostResponse;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,6 +33,7 @@ public class PostResource {
         this.jwt = jwt;
     }
 
+    @Operation(summary = "Creates a new Post inside specified community")
     @PostMapping("/create")
     @Transactional
     @SecurityRequirement(name = "JWT-token")
@@ -42,6 +50,7 @@ public class PostResource {
         return ResponseEntity.ok(new PostResponse(response));
     }
 
+    @Operation(summary = "Gets all posts from currently logged user")
     @GetMapping("/me")
     @Transactional
     @SecurityRequirement(name = "JWT-token")
@@ -57,12 +66,13 @@ public class PostResource {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "Gets all posts from specified community")
     @GetMapping("/community/{id}")
     @Transactional
     @SecurityRequirement(name = "JWT-token")
     @RolesAllowed({"USER"})
     public ResponseEntity<List<PostResponse>> getAllPostsFromCommunity(
-            @Valid @PathVariable Long id,
+            @Parameter(description = "The ID of the Community") @Valid @PathVariable Long id,
             HttpServletRequest headers
     ) {
         String token = headers.getHeader("Authorization");
@@ -73,12 +83,13 @@ public class PostResource {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "Gets all user posts from specified community")
     @GetMapping("/community/{id}/me")
     @Transactional
     @SecurityRequirement(name = "JWT-token")
     @RolesAllowed({"USER"})
     public ResponseEntity<List<PostResponse>> getAllPostsFromCommunityFromUser(
-            @Valid @PathVariable Long id,
+            @Parameter(description = "The ID of the Community") @Valid @PathVariable Long id,
             HttpServletRequest headers
     ) {
         String token = headers.getHeader("Authorization");
@@ -89,13 +100,14 @@ public class PostResource {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "Deletes a post from specified community, only the post owner, or the moderator may delete a post")
     @DeleteMapping("/{postId}/community/{communityId}")
     @Transactional
     @SecurityRequirement(name = "JWT-token")
     @RolesAllowed({"USER"})
     public ResponseEntity<HttpStatus> deletePost(
-            @Valid @PathVariable Long postId,
-            @Valid @PathVariable Long communityId,
+            @Parameter(description = "The ID of the Post") @Valid @PathVariable Long postId,
+            @Parameter(description = "The ID of the Community") @Valid @PathVariable Long communityId,
             HttpServletRequest headers
     ) {
         String token = headers.getHeader("Authorization");
@@ -103,13 +115,14 @@ public class PostResource {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
+    @Operation(summary = "Edits a post from a specified community, only the post owner, or the moderator may delete a post")
     @PutMapping("/{postId}/community/{communityId}")
     @Transactional
     @SecurityRequirement(name = "JWT-token")
     @RolesAllowed({"USER"})
     public ResponseEntity<PostResponse> deletePost(
-            @Valid @PathVariable Long postId,
-            @Valid @PathVariable Long communityId,
+            @Parameter(description = "The ID of the Post") @Valid @PathVariable Long postId,
+            @Parameter(description = "The ID of the Community") @Valid @PathVariable Long communityId,
             @Valid @RequestBody EditPostRequest request,
             HttpServletRequest headers
     ) {

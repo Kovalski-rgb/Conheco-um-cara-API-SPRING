@@ -12,6 +12,7 @@ import br.pucpr.communityserver.rest.users.responses.UserResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.models.Response;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import jakarta.annotation.security.RolesAllowed;
@@ -40,6 +41,7 @@ public class CommunityResource {
         this.jwt = jwt;
     }
 
+    @Operation(summary = "Creates a new community")
     @PostMapping("/create")
     @Transactional
     @SecurityRequirement(name = "JWT-token")
