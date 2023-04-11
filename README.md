@@ -68,7 +68,7 @@ Conheco um cara API, 75% implementado em spring
  - [ ] Documentation
     - [ ] AuthServer routes
     - [ ] P&S_Server routes
-    - [ ] CommunityServer routes
+    - [x] CommunityServer routes
  - [ ] Stress tests
     - [ ] Entering communities
     - [ ] Creating posts

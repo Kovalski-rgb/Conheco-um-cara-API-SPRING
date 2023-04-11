@@ -13,6 +13,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.models.Response;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import jakarta.annotation.security.RolesAllowed;
@@ -61,6 +62,8 @@ public class CommunityResource {
         return ResponseEntity.ok(response);
     }
 
+
+    @Operation(summary = "Requests user to join a community")
     @PostMapping("/join")
     @Transactional
     @SecurityRequirement(name = "JWT-token")
@@ -73,29 +76,35 @@ public class CommunityResource {
         service.joinCommunity(jwt.decode(token), request);
     }
 
+
+    @Operation(summary = "Lists every community, without their respective codes")
     @GetMapping("/all")
     @Transactional
     public ResponseEntity<List<MultipleCommunitiesResponse>> listCommunities(){
         return ResponseEntity.ok(service.listAllCommunities());
     }
 
+
+    @Operation(summary = "Gets a specific community, with its code")
     @GetMapping("/{communityId}")
     @Transactional
     @SecurityRequirement(name = "JWT-token")
     @RolesAllowed({"ADMIN"})
     public ResponseEntity<CommunityResponse> getCommunityById(
-            @PathVariable @Valid Long communityId
+            @Parameter(description = "The ID of the Community") @PathVariable @Valid Long communityId
     ){
         return ResponseEntity.ok(service.getCommunityById(communityId));
     }
 
+
+    @Operation(summary = "Lists every member inside a specific community, only a participant may get this information")
     @GetMapping("{communityId}/members/")
     @Transactional
     @SecurityRequirement(name = "JWT-token")
     @RolesAllowed({"USER"})
     public ResponseEntity<List<UserResponse>> listMembersFromCommunity(
             HttpServletRequest headers,
-            @RequestParam @Valid Long communityId
+            @Parameter(description = "The ID of the Community") @RequestParam @Valid Long communityId
     ){
         String token = headers.getHeader("Authorization");
         var result = service.listMembersFromCommunity(jwt.decode(token).getId(), communityId);
@@ -106,13 +115,15 @@ public class CommunityResource {
 
     }
 
+
+    @Operation(summary = "Edits a community, only administrators and community moderators can edit a community")
     @PutMapping("{id}")
     @Transactional
     @SecurityRequirement(name = "JWT-token")
     @RolesAllowed({"USER", "ADMIN"})
     public ResponseEntity<CommunityResponse> editCommunity(
             HttpServletRequest headers,
-            @RequestParam Long id,
+            @Parameter(description = "The ID of the Community") @RequestParam Long id,
             @Valid @RequestBody CommunityRequest request
     ){
         String token = headers.getHeader("Authorization");
@@ -121,42 +132,49 @@ public class CommunityResource {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "Deletes a community, only administrators and community moderators can delete a community")
     @DeleteMapping("{id}")
     @Transactional
     @SecurityRequirement(name = "JWT-token")
     @RolesAllowed({"USER", "ADMIN"})
     public void deleteCommunity(
             HttpServletRequest headers,
-            @RequestParam Long id
+            @Parameter(description = "The ID of the Community") @RequestParam Long id
     ){
         String token = headers.getHeader("Authorization");
         service.deleteCommunity(jwt.decode(token), id);
     }
 
+    @Operation(summary = "Request to leave a community")
     @PostMapping("/leave")
     @Transactional
     @SecurityRequirement(name = "JWT-token")
     @RolesAllowed({"USER"})
     public void leaveCommunity(
             HttpServletRequest headers,
-            @RequestParam Long communityId
+            @Parameter(description = "The ID of the Community") @RequestParam Long communityId
     ){
         String token = headers.getHeader("Authorization");
         service.leaveCommunity(jwt.decode(token), communityId);
     }
 
+
+    @Operation(summary = "Request to kick a specific user from a community, only admins and community moderators may kick a user")
     @PostMapping("/{communityId}/kick/{userId}")
     @Transactional
     @SecurityRequirement(name = "JWT-token")
     @RolesAllowed({"USER", "ADMIN"})
     public void kickUserFromCommunity(
             HttpServletRequest headers,
-            @PathVariable Long communityId,
-            @PathVariable Long userId
+            @Parameter(description = "The ID of the Community") @PathVariable Long communityId,
+            @Parameter(description = "The ID of the User") @PathVariable Long userId
     ){
         String token = headers.getHeader("Authorization");
         service.kickFromCommunity(jwt.decode(token), userId, communityId);
     }
+
+
+    @Operation(summary = "List all communities that the logged user belongs to")
     @GetMapping("/me")
     @Transactional
     @SecurityRequirement(name = "JWT-token")
@@ -168,13 +186,15 @@ public class CommunityResource {
         return service.listAllCommunitiesFromUser(jwt.decode(token).getId());
     }
 
+
+    @Operation(summary = "List all moderators from a specific community")
     @GetMapping("{communityId}/moderators/")
     @Transactional
     @SecurityRequirement(name = "JWT-token")
     @RolesAllowed({"USER"})
     public ResponseEntity<List<GetModeratorResponse>> listModeratorsFromCommunity(
         HttpServletRequest headers,
-        @RequestParam @Valid Long communityId
+        @Parameter(description = "The ID of the Community") @RequestParam @Valid Long communityId
     ){
         String token = headers.getHeader("Authorization");
         var result = service.listAllModeratorsFromCommunity(jwt.decode(token).getId(), communityId);
@@ -185,7 +205,8 @@ public class CommunityResource {
 
     }
 
-
+    // TODO remove the existence of RequestToggleModerator, utilize @PathVariables like this /{communityId}/moderators/toggle/{userId}
+    @Operation(summary = "Toggles moderator privileges on a specific member, only community moderators may toggle other user's privileges")
     @PostMapping("moderators/toggle")
     @Transactional
     @SecurityRequirement(name = "JWT-token")
