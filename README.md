@@ -65,9 +65,9 @@ Conheco um cara API, 75% implementado em spring
        - [x] GET /post/me
        - [x] GET /post/community/{id}
        - [x] GET /post/community/{id}/me
- - [ ] Documentation
-    - [ ] AuthServer routes
-    - [ ] P&S_Server routes
+ - [x] Documentation
+    - [x] AuthServer routes
+    - [x] P&S_Server routes
     - [x] CommunityServer routes
  - [ ] Stress tests
     - [ ] Entering communities

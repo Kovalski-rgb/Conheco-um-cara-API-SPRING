@@ -3,6 +3,7 @@ package br.pucpr.productAndServiceserver.rest.products;
 import br.pucpr.productAndServiceserver.rest.products.request.ProductRequest;
 import br.pucpr.productAndServiceserver.rest.products.request.UpdateProductRequestDTO;
 import br.pucpr.productAndServiceserver.rest.users.User;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -39,21 +40,27 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Product {
+
+    @Schema(example = "1")
     @Id @GeneratedValue
     private Long id;
 
+    @Schema(example = "Product name")
     @NotEmpty
     private String name;
 
+    @Schema(example = "Product description")
     private String description;
 
     @NotNull
     @ManyToOne
     private User owner;
 
+    @Schema(example = "12.34")
     @NotNull
     private Double price;
 
+    @Schema(example = "Headphones")
     @NotEmpty
     @ElementCollection
     @CollectionTable
@@ -61,6 +68,7 @@ public class Product {
     @Column(name = "productType")
     private Set<String> productType;
 
+    @Schema(example = "2023-04-09 15:53:23.000")
     private LocalDateTime createdAt;
 
     public Product fromRequest(ProductRequest request){

@@ -1,6 +1,7 @@
 package br.pucpr.productAndServiceserver.rest.products.response;
 
 import br.pucpr.productAndServiceserver.rest.products.Product;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.JoinColumn;
 import jakarta.validation.constraints.NotEmpty;
@@ -17,16 +18,22 @@ import java.util.Set;
 @NoArgsConstructor
 public class ProductResponse {
 
+    @Schema(example = "1")
     private Long id;
 
+    @Schema(example = "Product name")
     private String name;
 
+    @Schema(example = "Product description")
     private String description;
 
+    @Schema(example = "12.34")
     private Double price;
 
+    @Schema(example = "Headphones")
     private Set<String> productType;
 
+    @Schema(example = "2023-04-09 15:53:23.000")
     private LocalDateTime createdAt;
 
     public ProductResponse(Product product) {

@@ -2,6 +2,7 @@ package br.pucpr.authserver.rest.users;
 
 import br.pucpr.authserver.rest.users.requests.CreateUserRequest;
 import br.pucpr.authserver.rest.users.requests.UpdateUserRequest;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
@@ -27,19 +28,25 @@ public class User {
 
     @Id
     @GeneratedValue
+    @Schema(example = "1")
     private Long id;
 
     @NotEmpty
+    @Schema(example = "User name")
     private String name;
 
     @NotEmpty
+    @Schema(example = "email@email.com")
     private String email;
 
     @NotEmpty
+    @Schema(example = "S3Cre7_Password")
     private String password;
 
+    @Schema(example = "12345-6789")
     private String telephone;
 
+    @Schema(example = "USER")
     @ElementCollection
     @CollectionTable(name="roles", joinColumns = @JoinColumn(name = "id"))
     @Column(name="genre")

@@ -8,6 +8,8 @@ import br.pucpr.authserver.rest.users.requests.UpdateUserRequest;
 import br.pucpr.authserver.rest.users.responses.UserCreateResponse;
 import br.pucpr.authserver.rest.users.responses.UserGetResponse;
 import br.pucpr.authserver.rest.users.responses.UserLoginResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,6 +34,7 @@ public class UserResource {
     }
 
     //TODO check testUser route
+    @Operation(summary = "Gets a token for a test user, which is not allowed on production")
     @PostMapping("/testUser")
     public ResponseEntity<UserLoginResponse> getTestUser(
             @Valid @RequestBody TestUserRequest credentials
@@ -42,6 +45,7 @@ public class UserResource {
                 ResponseEntity.ok(user);
     }
 
+    @Operation(summary = "Request to login, returns a token that authenticates the user")
     @PostMapping("/login")
     @Transactional
     public ResponseEntity<UserLoginResponse> login(
@@ -53,6 +57,7 @@ public class UserResource {
                 ResponseEntity.ok(user);
     }
 
+    @Operation(summary = "Request to create a new user")
     @PostMapping("/create")
     @Transactional
     public ResponseEntity<UserCreateResponse> create(
@@ -65,26 +70,29 @@ public class UserResource {
                 ResponseEntity.ok(user);
     }
 
+    @Operation(summary = "Request to get an specific user from database, admin use only")
     @GetMapping("{id}")
     @Transactional
     @SecurityRequirement(name="AuthServer")
     @RolesAllowed({"ADMIN"})
     public UserGetResponse getUser(
-            @Valid @RequestParam Long id
+            @Parameter(description = "Use ID of the User") @Valid @PathVariable Long id
     ){
         return service.getUser(id);
     }
 
+    @Operation(summary = "Request to delete an specific user from database, admin use only")
     @DeleteMapping("{id}")
     @Transactional
     @SecurityRequirement(name="AuthServer")
     @RolesAllowed({"ADMIN"})
     public void deleteUser(
-            @Valid @RequestParam Long id
+            @Parameter(description = "Use ID of the User") @Valid @PathVariable Long id
     ){
         service.deleteUser(id);
     }
 
+    @Operation(summary = "Request to get currently logged user information")
     @GetMapping("/me")
     @Transactional
     @SecurityRequirement(name="AuthServer")
@@ -97,6 +105,7 @@ public class UserResource {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "Request to delete currently logged user")
     @DeleteMapping("/me")
     @Transactional
     @SecurityRequirement(name="AuthServer")
@@ -108,6 +117,7 @@ public class UserResource {
         service.deleteUser(jwt.decode(token).getId());
     }
 
+    @Operation(summary = "Request to edit currently logged user")
     @PutMapping("/me")
     @Transactional
     @SecurityRequirement(name="AuthServer")

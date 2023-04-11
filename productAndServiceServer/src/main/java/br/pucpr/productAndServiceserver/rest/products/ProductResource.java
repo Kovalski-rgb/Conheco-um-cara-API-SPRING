@@ -5,11 +5,14 @@ import br.pucpr.productAndServiceserver.rest.products.request.ProductRequest;
 import br.pucpr.productAndServiceserver.rest.products.request.UpdateProductRequestDTO;
 import br.pucpr.productAndServiceserver.rest.products.response.ProductPaginationResponse;
 import br.pucpr.productAndServiceserver.rest.products.response.ProductResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -47,6 +50,7 @@ public class ProductResource {
 //        return ResponseEntity.ok(service.listAllProducts(page));
 //    }
 
+    @Operation(summary = "Request to register a new Product inside the system")
     @PostMapping("/register")
     @Transactional
     @SecurityRequirement(name="JWT-token")
@@ -61,25 +65,27 @@ public class ProductResource {
                 ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "Gets user products, with pagination, the size of each page is 20")
     @GetMapping("/me/{page}")
     @Transactional
     @SecurityRequirement(name="JWT-token")
     @RolesAllowed("USER")
     public ResponseEntity<ProductPaginationResponse> getMyProducts(
             HttpServletRequest headers,
-            @Valid @PathVariable Integer page
+            @Parameter(description = "Page number, begins at 0") @Min(0) @Valid @PathVariable Integer page
     ){
         var userDTO = jwt.decode(headers.getHeader("Authorization"));
         return ResponseEntity.ok(service.listFromUser(userDTO.getId(), page));
     }
 
+    @Operation(summary = "Edits the specified product")
     @PutMapping("/{id}")
     @Transactional
     @SecurityRequirement(name="JWT-token")
     @RolesAllowed({"USER"})
     public ResponseEntity<ProductResponse> update(
             HttpServletRequest headers,
-            @Valid @PathVariable Long id,
+            @Parameter(description = "The ID of the Product") @Valid @PathVariable Long id,
             @Valid @RequestBody UpdateProductRequestDTO request
     ){
         var userDTO = jwt.decode(headers.getHeader("Authorization"));
@@ -88,13 +94,14 @@ public class ProductResource {
                 ResponseEntity.ok(result);
     }
 
+    @Operation(summary = "Deletes the specified product")
     @DeleteMapping("/{id}")
     @Transactional
     @SecurityRequirement(name="JWT-token")
     @RolesAllowed({"USER", "ADMIN"})
     public void delete(
             HttpServletRequest headers,
-            @Valid @PathVariable Long id
+            @Parameter(description = "The ID of the Product") @Valid @PathVariable Long id
     ){
         var userDTO = jwt.decode(headers.getHeader("Authorization"));
         service.deleteProduct(userDTO.getId(), id);

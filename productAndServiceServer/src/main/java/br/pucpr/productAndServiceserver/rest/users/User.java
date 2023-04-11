@@ -4,6 +4,7 @@ import br.pucpr.productAndServiceserver.rest.products.Product;
 import br.pucpr.productAndServiceserver.rest.services.Service;
 import br.pucpr.productAndServiceserver.rest.users.requests.UserTokenDTO;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,6 +18,7 @@ import java.util.Set;
 public class User {
 
     @Id
+    @Schema(example = "1")
     private Long id;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

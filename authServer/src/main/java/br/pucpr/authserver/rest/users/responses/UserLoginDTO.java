@@ -1,6 +1,7 @@
 package br.pucpr.authserver.rest.users.responses;
 
 import br.pucpr.authserver.rest.users.User;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,16 +17,22 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserLoginDTO {
-        private Long id;
-        private String email;
-        private String name;
-        private Set<String> roles;
 
-        public UserLoginDTO(User user) {
-            this.id = user.getId();
-            this.email = user.getEmail();
-            this.name = user.getName();
-            this.roles = user.getRoles();
-        }
+    @Schema(example = "1")
+    private Long id;
+
+    @Schema(example = "email@email.com")
+    private String email;
+    @Schema(example = "user name")
+    private String name;
+    @Schema(example = "USER")
+    private Set<String> roles;
+
+    public UserLoginDTO(User user) {
+        this.id = user.getId();
+        this.email = user.getEmail();
+        this.name = user.getName();
+        this.roles = user.getRoles();
+    }
 
 }
