@@ -33,17 +33,17 @@ public class UserResource {
         this.jwt = jwt;
     }
 
-    //TODO check testUser route
-    @Operation(summary = "Gets a token for a test user, which is not allowed on production")
-    @PostMapping("/testUser")
-    public ResponseEntity<UserLoginResponse> getTestUser(
-            @Valid @RequestBody TestUserRequest credentials
-    ){
-        var user = service.createTestUser(credentials.getToken());
-        return user == null ?
-                ResponseEntity.status(HttpStatus.UNAUTHORIZED).build() :
-                ResponseEntity.ok(user);
-    }
+//    //TODO check testUser route
+//    @Operation(summary = "Gets a token for a test user, which is not allowed on production")
+//    @PostMapping("/testUser")
+//    public ResponseEntity<UserLoginResponse> getTestUser(
+//            @Valid @RequestBody TestUserRequest credentials
+//    ){
+//        var user = service.createTestUser(credentials.getToken());
+//        return user == null ?
+//                ResponseEntity.status(HttpStatus.UNAUTHORIZED).build() :
+//                ResponseEntity.ok(user);
+//    }
 
     @Operation(summary = "Request to login, returns a token that authenticates the user")
     @PostMapping("/login")

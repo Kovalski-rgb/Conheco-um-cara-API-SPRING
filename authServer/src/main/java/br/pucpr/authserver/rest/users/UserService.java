@@ -40,6 +40,8 @@ public class UserService {
         User newUser = new User(request);
         Set<String> aux = new HashSet<>();
         aux.add("USER");
+        if(repository.getUserCountFromDatabase() == 0)
+            aux.add("ADMIN");
         newUser.setRoles(aux);
         return new UserCreateResponse(repository.save(newUser));
     }
@@ -75,6 +77,7 @@ public class UserService {
 
     public UserGetResponse updateUser(Long id, UpdateUserRequest updateRequest) {
         if(!repository.existsById(id)) throw new NotFoundException("User not found");
+        if(repository.getUserByEmail(updateRequest.getEmail()) != null) throw new ForbiddenException("This email is already being used");
         var user = repository.findById(id).get();
         user.setUpdatedData(updateRequest);
         return new UserGetResponse(repository.save(user));

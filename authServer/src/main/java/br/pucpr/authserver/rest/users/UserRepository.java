@@ -8,4 +8,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     public User getUserByEmailPassword(String email, String password);
     public User getUserByEmail(String email);
 
+    public int getUserCountFromDatabase();
+
 }

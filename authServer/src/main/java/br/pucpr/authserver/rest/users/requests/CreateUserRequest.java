@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CreateUserRequest {
     @NotEmpty
+    @Schema(example = "User name")
     private String name;
 
     @NotEmpty
@@ -24,5 +25,7 @@ public class CreateUserRequest {
     @Schema(example = "email@email.com")
     private String email;
 
+    @Pattern(regexp = "\\(?([0-9]{5})\\)?([ -]?)([0-9]{4})")
+    @Schema(example = "12345-6789")
     private String telephone;
 }

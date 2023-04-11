@@ -12,7 +12,7 @@ Conheco um cara API, 75% implementado em spring
           - [x] Services
  - [ ] Finish non-functional requisites
     - [ ] AuthServer
-       - [ ] Generate a default admin user
+       - [x] Generate a default admin user (when users in databse = 0, first is admin)
        - [ ] Admins toggle other admin roles
     - [ ] P&S_Server
        - [ ] Admin route to get all products & services (with pagination)

@@ -23,6 +23,10 @@ import java.util.Set;
                 "WHERE u.email = :email and " +
                 "u.password = :password"
 )
+@NamedQuery(
+        name="User.getUserCountFromDatabase",
+        query = "SELECT count(u) FROM User u"
+)
 
 public class User {
 

@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UpdateUserRequest {
 
+    @Schema(example = "Updated user name")
     private String name;
 
     @Pattern(regexp = "^(?=(.*[a-z])+)(?=(.*[A-Z])+)(?=(.*[0-9])+)(?=(.*[!@#$%^&*()\\-_+.])+).{8,}$")
@@ -22,6 +23,9 @@ public class UpdateUserRequest {
     @Schema(example = "email@email.com")
     private String email;
 
+
+    @Pattern(regexp = "\\(?([0-9]{5})\\)?([ -]?)([0-9]{4})")
+    @Schema(example = "23456-7890")
     private String telephone;
 
 }
