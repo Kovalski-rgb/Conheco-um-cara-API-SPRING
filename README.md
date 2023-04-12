@@ -31,17 +31,23 @@ spring.datasource.password=[password]
 3 - If you are on linux, you can simply run the linux-starter.sh
 ```./linux-starter.sh```
 
-4 - On windows, run:
+3.1 - On windows, try running (THIS WAS NOT TESTED TO RUN ON WINDOWS):
 ```
 mvn -f "communityServer/pom.xml" spring-boot:run
 mvn -f "authServer/pom.xml" spring-boot:run
 mvn -f "productAndServiceServer/pom.xml" spring-boot:run
 ```
 
-5 - Your server should be up and running, you should be able to access swagger-ui with the following links:
-     - Auth Server: http://localhost:8080/authserver/api/swagger-ui/index.html
-     - Community Server: http://localhost:8081/communityserver/api/swagger-ui/index.html
-     - Product and Service Server: http://localhost:8082/productAndServiceserver/api/swagger-ui/index.html
+4 - Your server should be up and running, you should be able to access swagger-ui with the following links:
+- Auth Server: http://localhost:8080/authserver/api/swagger-ui/index.html
+
+
+- Community Server: http://localhost:8081/communityserver/api/swagger-ui/index.html
+
+
+- Product and Service Server: http://localhost:8082/productAndServiceserver/api/swagger-ui/index.html
+
+
 
 ## TODO list
  - [x] Finish functional requisites
