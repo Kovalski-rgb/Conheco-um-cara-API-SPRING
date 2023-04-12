@@ -845,9 +845,7 @@ public class CommunityServiceTest {
 		when(userRepository.findById(any())).thenReturn(Optional.of(targetUser));
 		when(repository.save(any())).thenReturn(communityMockResponse);
 
-		assertThrows(ForbiddenException.class, () -> {
-			service.toggleModerator(modUserDTO, request);
-		});
+		assertThrows(ForbiddenException.class, () -> service.toggleModerator(modUserDTO, request));
 		verify(userRepository, times(0)).findById(any());
 		verify(repository, times(0)).save(any());
 	}

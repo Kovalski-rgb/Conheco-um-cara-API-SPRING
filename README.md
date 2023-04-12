@@ -1,7 +1,49 @@
 # Conheco-um-cara-API-SPRING
 Conheco um cara API, 75% implementado em spring
+<p align=center><a href="https://youtu.be/idk8NYyknmE">Apresentação da API</a></p>
 
-### TODO list
+## Dependencies to run:
+ - [Maven](https://maven.apache.org/install.html)
+
+## How to run?
+
+ - First things first, clone the project:
+ ```
+ git clone https://github.com/Kovalski-rgb/Conheco-um-cara-API-SPRING.git
+ cd Conheco-um-cara-API-SPRING
+ ```
+
+1 - Create three new databases on `mysql` under the adddress `localhost:3306`, with the following names:
+```
+authserver-spring
+communityserver-spring
+productAndServiceserver-spring
+```
+
+2 - Set the username on the settings file for each server, settings are located under
+`src/main/resources/application.properties`
+set the following lines with your user data
+```
+spring.datasource.username=[username]
+spring.datasource.password=[password]
+```
+
+3 - If you are on linux, you can simply run the linux-starter.sh
+```./linux-starter.sh```
+
+4 - On windows, run:
+```
+mvn -f "communityServer/pom.xml" spring-boot:run
+mvn -f "authServer/pom.xml" spring-boot:run
+mvn -f "productAndServiceServer/pom.xml" spring-boot:run
+```
+
+5 - Your server should be up and running, you should be able to access swagger-ui with the following links:
+     - Auth Server: http://localhost:8080/authserver/api/swagger-ui/index.html
+     - Community Server: http://localhost:8081/communityserver/api/swagger-ui/index.html
+     - Product and Service Server: http://localhost:8082/productAndServiceserver/api/swagger-ui/index.html
+
+## TODO list
  - [x] Finish functional requisites
     - [x] AuthServer
     - [x] P&S_Server
@@ -12,7 +54,7 @@ Conheco um cara API, 75% implementado em spring
           - [x] Services
  - [ ] Finish non-functional requisites
     - [ ] AuthServer
-       - [x] Generate a default admin user (when users in databse = 0, first is admin)
+       - [x] Generate a default admin user (when users in database = 0, first is admin)
        - [ ] Admins toggle other admin roles
     - [ ] P&S_Server
        - [ ] Admin route to get all products & services (with pagination)
